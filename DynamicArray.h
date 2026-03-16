@@ -8,9 +8,11 @@ private:
     size_t m_capacity;
     T* m_data;
 public:
-    DynamicArray(size_t size);
     DynamicArray(T* items, size_t count);
-    DynamicArray(const DynamicArray<T> &dynamicArray);
+    DynamicArray(size_t size);
+    DynamicArray(DynamicArray<T> &dynamic_array);
+
+    ~DynamicArray();
 };
 
 #include "DynamicArray.tpp"
