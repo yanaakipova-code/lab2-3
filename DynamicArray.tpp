@@ -33,7 +33,7 @@ DynamicArray<T>::DynamicArray(DynamicArray<T> &dynamic_array){
     m_capacity = dynamic_array.m_capacity;
     m_data = new T[m_capacity];
 
-    for (size_t i; i < m_size; i++){
+    for (size_t i = 0; i < m_size; i++){
         m_data[i] = dynamic_array.m_data[i];
     }
 }
@@ -41,4 +41,46 @@ DynamicArray<T>::DynamicArray(DynamicArray<T> &dynamic_array){
 template<class T>
 DynamicArray<T>::~DynamicArray(){
     delete[] m_data;
+}
+
+template<class T>
+T DynamicArray<T>::Get(size_t index){
+    if(index < 0 || index > m_size){
+        throw std::out_of_range("Индекс за передлами массива в функции Get");
+    }
+    return m_data[index];
+}
+
+template<class T>
+size_t DynamicArray<T>::GetSize(){
+    return m_size;
+}
+
+template<class T>
+void DynamicArray<T>::Set(size_t index, T value){
+    if (index < 0 || index > m_size){
+        throw std::out_of_range("Индекс за передлами массива в функции Set");
+    }
+    m_data[index] = value;
+}
+
+template<class T>
+void DynamicArray<T>::Resize(size_t new_size){
+    if(m_capacity < new_size){
+        m_capacity = new_size;
+        T* new_data = new T[m_capacity];
+        for (size_t i = 0; i < new_size; i++){
+            new_data[i] = m_data[i];
+        }
+        for (size_t i = m_size; i < new_size; i++) {
+            new_data[i] = T();
+        }
+        delete[] m_data;
+        m_data = new_data;
+    }else if(new_size < m_size){
+        for (size_t i = m_size; i < new_size; i++) {
+            m_data[i] = T();
+        }
+    }
+    m_size = new_size
 }

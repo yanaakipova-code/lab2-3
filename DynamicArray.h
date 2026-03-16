@@ -13,6 +13,11 @@ public:
     DynamicArray(DynamicArray<T> &dynamic_array);
 
     ~DynamicArray();
+
+    T Get(size_t index);
+    size_t GetSize();
+    void Set(size_t index, T value);
+    void Resize(size_t new_size);
 };
 
 #include "DynamicArray.tpp"
