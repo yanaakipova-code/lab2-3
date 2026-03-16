@@ -23,7 +23,19 @@ public:
     LinkedList ();
     LinkedList (const LinkedList<T>& linked_list);
     
-    ~LinkedList()
+    ~LinkedList();
+ 
+    T GetFirst();
+    T GetLast();
+
+    Node* GetNode(size_t index);
+    T Get(size_t index);
+    LinkedList<T>* GetSubList(size_t start_index, int end_index);
+    size_t GetLength(); 
+
+    void Append(T temp);
+    void Prepend(T temp);
+
 };
 
 #include "LinkedList.tpp"
