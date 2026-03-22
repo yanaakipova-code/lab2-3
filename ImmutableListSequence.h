@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include "ListSequence.h"
 #include <stdexcept>
 
@@ -13,11 +14,11 @@ public:
     void Prepend(T temp) override;
     void InsertAt(T temp, size_t index) override;
 
-    ImmutableListSequence<T>* WithAppend(T item) const;
-    ImmutableListSequence<T>* WithPrepend(T item) const;
-    ImmutableListSequence<T>* WithInsertAt(T item, size_t index) const;
+    std::unique_ptr<ImmutableListSequence<T>> WithAppend(T item) const;
+    std::unique_ptr<ImmutableListSequence<T>> WithPrepend(T item) const;
+    std::unique_ptr<ImmutableListSequence<T>> WithInsertAt(T item, size_t index) const;
 
-    Sequence<T>* Concat(Sequence<T>* other) const override;
-    ListSequence<T>* ToMutable() const;
+    std::unique_ptr<Sequence<T>> ImmutableListSequence<T>::Concat(Sequence<T>* other) const;
+    std::unique_ptr<ListSequence<T>> ToMutable() const;
 };
 #include "ImmutableListSequence.tpp"
