@@ -131,7 +131,7 @@ Sequence<T>* ArraySequence<T>::Map(T (*func)(T)){
     for (size_t i = 0; i < GetLength(); i++){
         result[i] = func(get(i));
     }
-    return new ArraySequence<T>(result, GetLength);
+    return new ArraySequence<T>(result, GetLength());
 }
 
 template<class T>

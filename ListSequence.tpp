@@ -107,7 +107,7 @@ Sequence<T>* ListSequence<T>::Concat(Sequence<T>* other) const {
 
 template<class T>
 Sequence<T>* ListSequence<T>::Map(T (*func)(T)){
-    T* result = new T[GetLength];
+    T* result = new T[GetLength()];
     for (size_t i = 0; i < GetLength(); i++) {
         result[i] = func(Get(i));
     }
