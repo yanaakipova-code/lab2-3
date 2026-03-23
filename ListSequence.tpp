@@ -104,3 +104,36 @@ Sequence<T>* ListSequence<T>::Concat(Sequence<T>* other) const {
     
     return result;
 }
+
+template<class T>
+Sequence<T>* ListSequence<T>::Map(T (*func)(T)){
+    T* result = new T[GetLength];
+    for (size_t i = 0; i < GetLength(); i++) {
+        result[i] = func(Get(i));
+    }
+    ListSequence<T>* new_seq = new ListSequence<T>(result, GetLength());
+    delete[] result;
+    return new_seq;
+}
+
+template<class T>
+Sequence<T>* ListSequence<T>::Where(bool (*predicate)(T)) {
+    DynamicArray<T> temp;
+    for (size_t i = 0; i < GetLength(); i++) {
+        T elem = Get(i);
+        if (predicate(elem)) {
+            temp.Append(elem);
+        }
+    }
+    return new ListSequence<T>(temp.GetData(), temp.GetSize());
+}
+
+
+template<class T>
+T ListSequence<T>::Reduce(T (*func)(T, T), T initial) {
+    T result = initial;
+    for (size_t i = 0; i < GetLength(); i++) {
+        result = func(result, Get(i));
+    }
+    return result;
+}

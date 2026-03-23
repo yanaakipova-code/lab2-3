@@ -17,5 +17,11 @@ public:
     virtual void Prepend(T temp) = 0;
     virtual void InsertAt(T temp, size_t index) = 0;
     virtual Sequence<T>* Concat(Sequence<T>* sequence) const = 0;
+
+    virtual Sequence<T>* Map(T (*func)(T)) = 0;
+    virtual Sequence<T>* Where(bool (*predicate)(T)) = 0;
+    virtual T Reduce(T (*func)(T, T), T initial) = 0;
+
+    // =о, те метод не имеет реализации в этом классе(abstract class)
 };
 

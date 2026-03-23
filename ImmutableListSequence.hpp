@@ -18,7 +18,7 @@ public:
     std::unique_ptr<ImmutableListSequence<T>> WithPrepend(T item) const;
     std::unique_ptr<ImmutableListSequence<T>> WithInsertAt(T item, size_t index) const;
 
-    std::unique_ptr<Sequence<T>> ImmutableListSequence<T>::Concat(Sequence<T>* other) const;
+    std::unique_ptr<Sequence<T>> Concat(Sequence<T>* other) const override;
     std::unique_ptr<ListSequence<T>> ToMutable() const;
 };
 #include "ImmutableListSequence.tpp"

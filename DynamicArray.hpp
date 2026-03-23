@@ -18,6 +18,9 @@ public:
     size_t GetSize();
     void Set(size_t index, T value);
     void Resize(size_t new_size);
+
+    T* GetData();
+    const T* GetData() const;
 };
 
 #include "DynamicArray.tpp"

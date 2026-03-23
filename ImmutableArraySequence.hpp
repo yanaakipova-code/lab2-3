@@ -18,7 +18,7 @@ public:
     std::unique_ptr<ImmutableArraySequence<T>> WithPrepend(T item) const;
     std::unique_ptr<ImmutableArraySequence<T>> WithInsertAt(T item, size_t index) const;
 
-    std::unique_ptr<Sequence<T>> ImmutableArraySequence<T>::Concat(Sequence<T>* other) const;
+    std::unique_ptr<Sequence<T>> Concat(Sequence<T>* other) const override;
     std::unique_ptr<ArraySequence<T>> ToMutable() const;
 };
 

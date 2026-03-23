@@ -1,8 +1,8 @@
 #pragma once
 #include <stdexcept>
 #include <cstddef>
-#include "Sequence.h"
-#include "LinkedList.h"
+#include "Sequence.hpp"
+#include "LinkedList.hpp"
 
 template<class T>
 class ListSequence : public Sequence<T>{
@@ -26,6 +26,10 @@ public:
     void Prepend(T temp) override;
     void InsertAt(T temp, size_t index) override;
     Sequence<T>* Concat(Sequence<T>* other) const override;
+
+    Sequence<T>* Map(T (*func)(T)) override;
+    Sequence<T>* Where(bool (*predicate)(T)) override;
+    T Reduce(T (*func)(T, T), T initial) override;
 };
 
 #include "ListSequence.tpp"

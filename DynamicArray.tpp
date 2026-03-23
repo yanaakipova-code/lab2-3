@@ -89,3 +89,12 @@ void DynamicArray<T>::Resize(size_t new_size){
     m_size = new_size;
     m_capacity = new_size;
 }
+template<class T>
+T* DynamicArray<T>::GetData() {
+    return m_data; 
+}
+
+template<class T>
+const T* DynamicArray<T>::GetData() const {
+    return m_data;
+}
