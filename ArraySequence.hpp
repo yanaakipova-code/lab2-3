@@ -26,6 +26,10 @@ public:
     void InsertAt(T temp, size_t index) override;
     void Set(size_t index, T value);
     Sequence<T>* Concat(Sequence<T>* other) const override;
+
+    Sequence<T>* Map(T (*func)(T)) override;
+    Sequence<T>* Where(bool(*predicate)(T)) override;
+    T Reduce(T (*func)(T, T), T initial) override;
 };
 
 #include "ArraySequence.tpp"

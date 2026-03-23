@@ -124,3 +124,39 @@ Sequence<T>* ArraySequence<T>::Concat(Sequence<T>* other) const {
     delete[] temp_data;
     return result;
 }
+
+template<class T>
+Sequence<T>* ArraySequence<T>::Map(T (*func)(T)){
+    T* result = new T[GetLength()];
+    for (size_t i = 0; i < GetLength(); i++){
+        result[i] = func(get(i));
+    }
+    return new ArraySequence<T>(result, GetLength);
+}
+
+template<class T>
+Sequence<T>* ArraySequence<T>::Where(bool (*predicate)(T)){
+    DynamicArray<T> temp;
+    for (size_t i = 0; i < GetLength(); i++) {
+        T elem = Get(i);
+        if (predicate(elem)) {
+            temp.Append(elem);
+        }
+    }
+    T* result = new T[temp.GetSize()];
+    for (size_t i = 0; i < temp.GetSize(); i++){
+        result[i] = temp.Get(i);
+    }
+    ArraySequence<T>* res = new ArraySequence<T>(result, temp.GetSize());
+    delete[] result;
+    return res;
+}
+
+template<class T>
+T ArraySequence<T>::Reduce(T (*func)(T, T), T initial){
+    T result = initial;
+    for (size_t i = 0; i < GetLength(); i++) {
+        result = func(result, Get(i));
+    }
+    return result;
+}
