@@ -1,4 +1,4 @@
-#include "ListSequence.h"
+#include "ListSequence.hpp"
 #include <stdexcept>
 
 template<class T>

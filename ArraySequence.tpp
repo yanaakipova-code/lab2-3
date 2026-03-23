@@ -1,4 +1,4 @@
-#include "ArraySequence.h"
+#include "ArraySequence.hpp"
 #include <stdexcept>
 
 template<class T>
@@ -93,6 +93,11 @@ void ArraySequence<T>::InsertAt(T temp, size_t index) {
     }
     
     m_items->Set(index, temp);
+}
+
+template<class T>
+void ArraySequence<T>::Set(size_t index, T value) {
+    m_items->Set(index, value);
 }
 
 template<class T>

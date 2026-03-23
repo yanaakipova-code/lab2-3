@@ -1,6 +1,6 @@
 #include <cstddef>
 #include <stdexcept> 
-#include "DynamicArray.h"
+#include "DynamicArray.hpp"
 template<class T>
 DynamicArray<T>::DynamicArray(T* items, size_t count){
     m_size = count;

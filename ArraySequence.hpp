@@ -1,8 +1,8 @@
 #pragma once
 #include <stdexcept>
 #include <cstddef>
-#include "Sequence.h"
-#include "DynamicArray.h"
+#include "Sequence.hpp"
+#include "DynamicArray.hpp"
 
 template<class T>
 class ArraySequence: public Sequence<T>{
@@ -24,6 +24,7 @@ public:
     void Append(T temp) override;
     void Prepend(T temp) override;
     void InsertAt(T temp, size_t index) override;
+    void Set(size_t index, T value);
     Sequence<T>* Concat(Sequence<T>* other) const override;
 };
 

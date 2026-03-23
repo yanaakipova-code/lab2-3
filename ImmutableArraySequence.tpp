@@ -1,4 +1,4 @@
-#include "ImmutableArraySequence.h"
+#include "ImmutableArraySequence.hpp"
 #include <memory>
 
 template<class T>

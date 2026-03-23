@@ -13,19 +13,19 @@ public:
          m_value = value; 
     }
 
-     Bit operator_and(const Bit& other) const { 
+    Bit operatorAnd(const Bit& other) const { 
         return Bit(m_value & other.m_value); 
     }
     
-    Bit operator_or(const Bit& other) const { 
+    Bit operatorOr(const Bit& other) const { 
         return Bit(m_value | other.m_value); 
     }
     
-    Bit operator_xor(const Bit& other) const { 
+    Bit operatorXor(const Bit& other) const { 
         return Bit(m_value ^ other.m_value); 
     }
     
-    Bit operator_not() const { 
+    Bit operatorNot() const { 
         return Bit(!m_value); 
     }
     operator bool() const { 

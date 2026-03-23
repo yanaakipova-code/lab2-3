@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "ArraySequence.h"
+#include "ArraySequence.hpp"
 #include <stdexcept>
 
 template<class T>
