@@ -32,6 +32,8 @@ public:
     T Get(size_t index) const;
     LinkedList<T>* GetSubList(size_t start_index, size_t end_index) const;
     size_t GetLength() const; 
+    T* GetData();
+    const T* GetData() const;
 
     void Append(T temp);
     void Prepend(T temp);

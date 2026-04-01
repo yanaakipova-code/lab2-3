@@ -95,6 +95,36 @@ typename LinkedList<T>::Node* LinkedList<T>::GetNode(size_t index) const {
 }
 
 template<class T>
+T* LinkedList<T>::GetData() {
+    if (m_size == 0) {
+        return nullptr;
+    }
+    
+    T* data = new T[m_size];
+    Node* current = m_head;
+    for (size_t i = 0; i < m_size; i++) {
+        data[i] = current->data;
+        current = current->next;
+    }
+    return data;
+}
+
+template<class T>
+const T* LinkedList<T>::GetData() const {
+    if (m_size == 0) {
+        return nullptr;
+    }
+    
+    T* data = new T[m_size];
+    Node* current = m_head;
+    for (size_t i = 0; i < m_size; i++) {
+        data[i] = current->data;
+        current = current->next;
+    }
+    return data;
+}
+
+template<class T>
 T LinkedList<T>::Get(size_t index) const {
     return GetNode(index)->data;
 }

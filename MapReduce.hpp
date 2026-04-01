@@ -1,18 +1,19 @@
 #pragma once
 #include "Sequence.hpp"
 #include "ArraySequence.hpp"
+#include <algorithm>
+#include <stdexcept>
 
 template<class T, class U>
 Sequence<U>* MapWithIndex(Sequence<T>& seq, U (*func)(const T&,size_t)){
     size_t len = seq.GetLength();
-    ArraySequence<U>* result = new ArraySequence<U>(len);
-    size_t i=0;
-    for (auto it = seq.begin(); it != seq.end(); ++it,i++){
-        result->Set(i,func(*it,i));
+    ArraySequence<U>* result = new ArraySequence<U>();
+    size_t i = 0;
+    for (auto it = seq.begin(); it != seq.end(); ++it, ++i){
+        result->Append(func(*it, i));
     }
     return result;
 }
-
 
 template<class T>
 Sequence<T>* Skip(Sequence<T>& seq, size_t n){
@@ -20,14 +21,13 @@ Sequence<T>* Skip(Sequence<T>& seq, size_t n){
     if (n >= len) {
         return new ArraySequence<T>();
     }
-    size_t new_len = len - n;
     ArraySequence<T>* result = new ArraySequence<T>();
 
     auto it = seq.begin();
     for(size_t i = 0; i < n; ++i){
         ++it;
     }
-    for(; it <= seq.end(); ++it){
+    for(; it != seq.end(); ++it){
         result->Append(*it);
     }
     return result;
@@ -43,7 +43,8 @@ Sequence<T>* Take(Sequence<T>& seq, size_t n){
         n = len;
     }
     ArraySequence<T>* result = new ArraySequence<T>();
-    for(auto it = seq.begin(); it != seq.end(); ++it){
+    size_t count = 0;
+    for(auto it = seq.begin(); it != seq.end() && count < n; ++it, ++count){
         result->Append(*it);
     }
     return result;
@@ -51,17 +52,17 @@ Sequence<T>* Take(Sequence<T>& seq, size_t n){
 
 template<class T, class U>
 Sequence<std::pair<T,U>>* Zip(Sequence<T>& seq1, Sequence<U>& seq2){
-    size_t min_len = min(seq1.GetLength(), seq2.GetLength());
-    ArraySequence<std::pair<T,U>>* result = new ArraySequence<std::pair<T,U>>;
+    size_t min_len = std::min(seq1.GetLength(), seq2.GetLength());
+    ArraySequence<std::pair<T,U>>* result = new ArraySequence<std::pair<T,U>>();
 
-    auto it1 = seq1.begin;
-    auto it2 = seq2.begin;
+    auto it1 = seq1.begin();
+    auto it2 = seq2.begin();
 
-    for (size_t i = 0; i < minLen; ++i, ++it1, ++it2) {
+    for (size_t i = 0; i < min_len; ++i, ++it1, ++it2) {
         result->Append({*it1, *it2});
     }
 
-    return result
+    return result;
 }
 
 template<class T, class U>
@@ -82,7 +83,7 @@ Sequence<U>* FlatMap(Sequence<T>& seq, Sequence<U>* (*func)(const T&)) {
 template<class T>
 Sequence<T>* Range(T start, T end, T step = 1){
     if (step == 0){
-        trown std::invalid_argument("Range: шаг не может быть равным 0");
+        throw std::invalid_argument("Range: step cannot be zero");
     } 
     ArraySequence<T>* result = new ArraySequence<T>();
     T current = start;
@@ -90,7 +91,5 @@ Sequence<T>* Range(T start, T end, T step = 1){
         result->Append(current);
         current += step;
     }
-    
     return result;
-
 }

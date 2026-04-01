@@ -25,15 +25,6 @@ ListSequence<T>::~ListSequence() {
 }
 
 template<class T>
-ConstIterator<T> ListSequence<T>::cbegin() const {
-    return ConstIterator<T>(m_list->GetData());
-}
-
-template<class T>
-ConstIterator<T> ListSequence<T>::cend() const {
-    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
-}
-template<class T>
 T ListSequence<T>::GetFirst() const {
     if (m_list->GetLength() == 0) {
         throw std::out_of_range("Sequence пуст");
@@ -159,3 +150,32 @@ Option<T> ListSequence<T>::TryGetLast(bool (*predicate)(T)) const {
     return Option<T>::None();
 }
 
+template<class T>
+Iterator<T> ListSequence<T>::begin() {
+    return Iterator<T>(m_list->GetData());
+}
+
+template<class T>
+Iterator<T> ListSequence<T>::end() {
+    return Iterator<T>(m_list->GetData() + m_list->GetLength());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::begin() const {
+    return ConstIterator<T>(m_list->GetData());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::end() const {
+    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::cbegin() const {
+    return ConstIterator<T>(m_list->GetData());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::cend() const {
+    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
+}

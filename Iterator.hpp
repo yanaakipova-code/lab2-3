@@ -36,6 +36,9 @@ public:
     bool operator==(const Iterator& other) const{
         return m_ptr == other.m_ptr;
     }
+    bool operator!=(const Iterator& other) const {
+        return !(*this == other);
+    }
 };
 
 template<class T>
@@ -72,5 +75,9 @@ public:
 
      bool operator==(const ConstIterator& other) const { 
         return m_ptr == other.m_ptr; 
+    }
+
+    bool operator!=(const ConstIterator& other) const {
+        return !(*this == other);
     }
 };

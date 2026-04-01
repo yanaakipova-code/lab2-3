@@ -27,16 +27,6 @@ ArraySequence<T>::~ArraySequence(){
 }
 
 template<class T>
-Option<T> ArraySequence<T>::TryGetLast(bool (*predicate)(T)) const {
-    for (size_t i = GetLength(); i > 0; i--) {
-        T elem = Get(i - 1);
-        if (predicate == nullptr || predicate(elem)) {
-            return Option<T>::Some(elem);
-        }
-    }
-    return Option<T>::None();
-}
-template<class T>
 Iterator<T> ArraySequence<T>::begin() {
     return Iterator<T>(m_items->GetData());
 }
