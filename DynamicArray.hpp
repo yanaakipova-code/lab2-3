@@ -5,7 +5,6 @@ template<class T>
 class DynamicArray{
 private:
     size_t m_size;
-    size_t m_capacity;
     T* m_data;
 public:
     DynamicArray(); 
