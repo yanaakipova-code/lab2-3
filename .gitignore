@@ -3,4 +3,3 @@
 *.a
 *.exe
 *.json
-main_curses.cpp
