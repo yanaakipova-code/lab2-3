@@ -171,11 +171,27 @@ ConstIterator<T> ListSequence<T>::end() const {
 }
 
 template<class T>
-ConstIterator<T> ListSequence<T>::cbegin() const {
-    return ConstIterator<T>(m_list->GetData());
+T& ListSequence<T>::operator[](size_t index) {
+    if (index >= GetLength()) {
+        throw std::out_of_range("Индекс за выходит за пределы");
+    }
+    
+    auto it = begin();
+    for (size_t i = 0; i < index; ++i) {
+        ++it;
+    }
+    return *it;
 }
 
 template<class T>
-ConstIterator<T> ListSequence<T>::cend() const {
-    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
+const T& ListSequence<T>::operator[](size_t index) const {
+    if (index >= GetLength()) {
+        throw std::out_of_range("Индекс за выходит за пределы");
+    }
+    
+    auto it = begin();
+    for (size_t i = 0; i < index; ++i) {
+        ++it;
+    }
+    return *it;
 }
