@@ -363,3 +363,10 @@ ConstIterator<Bit> BitSequence::begin() const {
 ConstIterator<Bit> BitSequence::end() const {
     throw std::runtime_error("BitSequence::end() const: итераторы требуют временного массива");
 }
+ConstIterator<Bit> BitSequence::cbegin() const {
+    throw std::runtime_error("BitSequence::cbegin(): итераторы требуют временного массива");
+}
+
+ConstIterator<Bit> BitSequence::cend() const {
+    throw std::runtime_error("BitSequence::cend(): итераторы требуют временного массива");
+}

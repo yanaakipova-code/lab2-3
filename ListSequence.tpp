@@ -90,7 +90,7 @@ Sequence<T>* ListSequence<T>::Concat(Sequence<T>* other) const {
     
     ListSequence<T>* result = new ListSequence<T>(*this);
     
-    for (int i = 0; i < other->GetLength(); i++) {
+    for (size_t i = 0; i < other->GetLength(); i++) {
         result->Append(other->Get(i));
     }
     
@@ -167,6 +167,16 @@ ConstIterator<T> ListSequence<T>::begin() const {
 
 template<class T>
 ConstIterator<T> ListSequence<T>::end() const {
+    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::cbegin() const {
+    return ConstIterator<T>(m_list->GetData());
+}
+
+template<class T>
+ConstIterator<T> ListSequence<T>::cend() const {
     return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
 }
 

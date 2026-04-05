@@ -40,8 +40,13 @@ public:
     ConstIterator<T> begin() const override;
     ConstIterator<T> end() const override;
 
+    ConstIterator<T> cbegin() const override;
+    ConstIterator<T> cend() const override;
+
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
+
+
 };
 
 #include "ListSequence.tpp"

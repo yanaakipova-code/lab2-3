@@ -3,6 +3,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
+#include "ArraySequence.hpp" 
 #include "Sequence.hpp"
 #include "DynamicArray.hpp"
 #include "Bit.hpp"

@@ -45,8 +45,8 @@ public:
     ConstIterator<T> begin() const override;
     ConstIterator<T> end() const override;
 
-    virtual ConstIterator<T> cbegin() const;
-    virtual ConstIterator<T> cend() const;
+    ConstIterator<T> cbegin() const;
+    ConstIterator<T> cend() const;
 };
 
 #include "ArraySequence.tpp"

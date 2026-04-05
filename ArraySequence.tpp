@@ -111,7 +111,7 @@ void ArraySequence<T>::Prepend(T temp) {
 
 template<class T>
 void ArraySequence<T>::InsertAt(T temp, size_t index) {
-    int old_size = m_items->GetSize();
+    size_t old_size = m_items->GetSize();
     
     if (index < 0 || index > old_size) {
         throw std::out_of_range("Индекс за массивом");
@@ -119,7 +119,7 @@ void ArraySequence<T>::InsertAt(T temp, size_t index) {
     
     m_items->Resize(old_size + 1);
     
-    for (int i = old_size; i > index; i--) {
+    for (size_t i = old_size; i > index; i--) {
         m_items->Set(i, m_items->Get(i - 1));
     }
     
