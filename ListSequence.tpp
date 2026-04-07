@@ -1,4 +1,6 @@
 #include "ListSequence.hpp"
+#include "ListIterator.hpp"
+#include "LinkedList.hpp"
 #include <stdexcept>
 #include "Error.hpp"
 template<class T>
@@ -151,36 +153,6 @@ Option<T> ListSequence<T>::TryGetLast(bool (*predicate)(T)) const {
 }
 
 template<class T>
-Iterator<T> ListSequence<T>::begin() {
-    return Iterator<T>(m_list->GetData());
-}
-
-template<class T>
-Iterator<T> ListSequence<T>::end() {
-    return Iterator<T>(m_list->GetData() + m_list->GetLength());
-}
-
-template<class T>
-ConstIterator<T> ListSequence<T>::begin() const {
-    return ConstIterator<T>(m_list->GetData());
-}
-
-template<class T>
-ConstIterator<T> ListSequence<T>::end() const {
-    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
-}
-
-template<class T>
-ConstIterator<T> ListSequence<T>::cbegin() const {
-    return ConstIterator<T>(m_list->GetData());
-}
-
-template<class T>
-ConstIterator<T> ListSequence<T>::cend() const {
-    return ConstIterator<T>(m_list->GetData() + m_list->GetLength());
-}
-
-template<class T>
 T& ListSequence<T>::operator[](size_t index) {
     if (index >= GetLength()) {
         throw OutOfRangeException("Индекс за выходит за пределы");
@@ -204,4 +176,34 @@ const T& ListSequence<T>::operator[](size_t index) const {
         ++it;
     }
     return *it;
+}
+
+template<class T>
+ListIterator<T> ListSequence<T>::begin() {
+    return m_list->begin();
+}
+
+template<class T>
+ListIterator<T> ListSequence<T>::end() {
+    return m_list->end();
+}
+
+template<class T>
+ConstListIterator<T> ListSequence<T>::begin() const {
+    return m_list->begin();
+}
+
+template<class T>
+ConstListIterator<T> ListSequence<T>::end() const {
+    return m_list->end();
+}
+
+template<class T>
+ConstListIterator<T> ListSequence<T>::cbegin() const {
+    return m_list->cbegin();
+}
+
+template<class T>
+ConstListIterator<T> ListSequence<T>::cend() const {
+    return m_list->cend();
 }

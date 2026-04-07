@@ -1,5 +1,6 @@
 #include "LinkedList.hpp"
 #include "Error.hpp"
+#include "ListIterator.hpp"
 #include <cstddef>
 #include <stdexcept> 
 template<class T>
@@ -263,4 +264,34 @@ void LinkedList<T>::Clear(){
     m_head = nullptr;
     m_tail = nullptr;
     m_size = 0;
+}
+
+template<class T>
+ListIterator<T> begin() {
+    return ListIterator<T>(m_head);
+}
+ 
+template<class T>
+ListIterator<T> end() {
+    return ListIterator<T>(nullptr);
+}
+ 
+template<class T>
+ConstListIterator<T> begin() {
+    return ConstListIterator<T>(m_head);
+}
+
+template<class T>
+ConstListIterator<T> end() {
+    return ConstListIterator<T>(nullptr);
+}
+
+template<class T>
+ConstListIterator<T> cbegin() {
+    return ConstListIterator<T>(m_head);
+}
+
+template<class T>
+ConstListIterator<T> cend() {
+    return ConstListIterator<T>(nullptr);
 }

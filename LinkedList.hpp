@@ -46,6 +46,13 @@ public:
     bool IsEmpty() const;
     void Clear();
 
+    ListIterator<T> begin();
+    ListIterator<T> end();
+    ConstListIterator<T> begin()
+    ConstListIterator<T> end()
+    ConstListIterator<T> cbegin() const;
+    ConstListIterator<T> cend() const ;
+
 };
 
 #include "LinkedList.tpp"

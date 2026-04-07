@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <cstddef>
 #include "Sequence.hpp"
+#include "ListIterator.hpp"
 #include "LinkedList.hpp"
 #include "Option.hpp"
 
@@ -35,18 +36,15 @@ public:
     Option<T> TryGetFirst(bool (*predicate)(T) = nullptr) const override;
     Option<T> TryGetLast(bool (*predicate)(T) = nullptr) const override;
 
-    Iterator<T> begin() override;
-    Iterator<T> end() override;
-    ConstIterator<T> begin() const override;
-    ConstIterator<T> end() const override;
-
-    ConstIterator<T> cbegin() const override;
-    ConstIterator<T> cend() const override;
-
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
-
+    ListIterator<T> begin() override;
+    ListIterator<T> end() override;
+    ConstListIterator<T> begin() const override;
+    ConstListIterator<T> end() const override;
+    ConstListIterator<T> cbegin() const override;
+    ConstListIterator<T> cend() const override;
 };
 
 #include "ListSequence.tpp"
