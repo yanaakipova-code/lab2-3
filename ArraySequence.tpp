@@ -118,59 +118,44 @@ Sequence<T>* ArraySequence<T>::Concat(Sequence<T>* other) const {
 template<class T>
 Sequence<T>* ArraySequence<T>::Map(T (*func)(T)) {
     ArraySequence<T>* result = new ArraySequence<T>();
-    auto it = begin();
-    auto endIt = end();
-    
-    while (*it != *endIt) {
-        result->Append(func(**it));
-        ++(*it);
+    size_t len = GetLength();
+    for (size_t i = 0; i < len; i++) {
+        result->Append(func(Get(i)));
     }
-    
     return result;
 }
 
 template<class T>
 Sequence<T>* ArraySequence<T>::Where(bool (*predicate)(T)) {
     ArraySequence<T>* result = new ArraySequence<T>();
-    auto it = begin();
-    auto endIt = end();
-    
-    while (*it != *endIt) {
-        T elem = **it;
+    size_t len = GetLength();
+    for (size_t i = 0; i < len; i++) {
+        T elem = Get(i);
         if (predicate(elem)) {
             result->Append(elem);
         }
-        ++(*it);
     }
-    
     return result;
 }
 
 template<class T>
 T ArraySequence<T>::Reduce(T (*func)(T, T), T initial) {
     T result = initial;
-    auto it = begin();
-    auto endIt = end();
-    
-    while (*it != *endIt) {
-        result = func(result, **it);
-        ++(*it);
+    size_t len = GetLength();
+    for (size_t i = 0; i < len; i++) {
+        result = func(result, Get(i));
     }
-    
     return result;
 }
 
 template<class T>
 Option<T> ArraySequence<T>::TryGetFirst(bool (*predicate)(T)) const {
-    auto it = begin();
-    auto endIt = end();
-    
-    while (*it != *endIt) {
-        T elem = **it;
+    size_t len = GetLength();
+    for (size_t i = 0; i < len; i++) {
+        T elem = Get(i);
         if (predicate == nullptr || predicate(elem)) {
             return Option<T>::Some(elem);
         }
-        ++(*it);
     }
     return Option<T>::None();
 }
@@ -197,7 +182,6 @@ const T& ArraySequence<T>::operator[](size_t index) const {
     return m_items->GetRef(index);
 }
 
-// ============= ИТЕРАТОРЫ =============
 
 template<class T>
 std::unique_ptr<Iterator<T>> ArraySequence<T>::begin() {
