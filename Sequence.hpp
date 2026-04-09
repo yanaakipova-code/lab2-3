@@ -27,13 +27,11 @@ public:
     virtual Option<T> TryGetFirst(bool (*predicate)(T) = nullptr) const = 0;
     virtual Option<T> TryGetLast(bool (*predicate)(T) = nullptr) const = 0;
 
-    virtual Iterator<T> begin() = 0;
-    virtual Iterator<T> end() = 0;
-    virtual ConstIterator<T> begin() const = 0;
-    virtual ConstIterator<T> end() const = 0;
-
-    virtual ConstIterator<T> cbegin() const = 0;
-    virtual ConstIterator<T> cend() const = 0;
-
+    virtual std::unique_ptr<Iterator<T>> begin() = 0;
+    virtual std::unique_ptr<Iterator<T>> end() = 0;
+    virtual std::unique_ptr<ConstIterator<T>> begin() const = 0;
+    virtual std::unique_ptr<ConstIterator<T>> end() const = 0;
+    virtual std::unique_ptr<ConstIterator<T>> cbegin() const = 0;
+    virtual std::unique_ptr<ConstIterator<T>> cend() const = 0;
 };
 

@@ -17,28 +17,30 @@ private:
     DynamicArray<T>* m_data;
     size_t m_bit_count;
     
+    static constexpr size_t BITS_PER_CELL = sizeof(T) * 8;
+    
     size_t GetCellIndex(size_t bit_index) const {
-        return bit_index / sizeof(T);
+        return bit_index / BITS_PER_CELL;
     }
     
     size_t GetBitOffset(size_t bit_index) const {
-        return bit_index % sizeof(T);
+        return bit_index % BITS_PER_CELL;
     }
     
     size_t GetCellsCount() const {
-        return (m_bit_count + sizeof(T);) / sizeof(T);;
+        return (m_bit_count + BITS_PER_CELL - 1) / BITS_PER_CELL;
     }
     
     void ClearUnusedBits() {
         if (m_bit_count == 0) return;
         
         size_t cells = GetCellsCount();
-        size_t lastBits = GetBitOffset(m_bit_count);
+        size_t lastBits = m_bit_count % BITS_PER_CELL;
         
         if (lastBits != 0) {
-            uint32_t mask = (1u << lastBits) - 1;
-            uint32_t last_val = m_data->Get(cells - 1);//Достаём текущее значение последней ячейки
-            m_data->Set(cells - 1, last_val & mask);//Очищаем мусорные биты и сохраняем обратно
+            T mask = (static_cast<T>(1) << lastBits) - 1;
+            T last_val = m_data->Get(cells - 1);
+            m_data->Set(cells - 1, last_val & mask);
         }
     }
 
@@ -69,25 +71,26 @@ public:
     void SetBit(size_t index, bool value);
     bool GetBit(size_t index) const;
 
-    std::unique_ptr<BitSequence> And(const BitSequence& other) const;
-    std::unique_ptr<BitSequence> Or(const BitSequence& other) const;
-    std::unique_ptr<BitSequence> Xor(const BitSequence& other) const;
-    std::unique_ptr<BitSequence> Not() const;
+    std::unique_ptr<BitSequence<T>> And(const BitSequence<T>& other) const;
+    std::unique_ptr<BitSequence<T>> Or(const BitSequence<T>& other) const;
+    std::unique_ptr<BitSequence<T>> Xor(const BitSequence<T>& other) const;
+    std::unique_ptr<BitSequence<T>> Not() const;
     
     std::unique_ptr<ArraySequence<Bit>> ToMutable() const;
     
-    BitSequence operator&(const BitSequence& other) const;
-    BitSequence operator|(const BitSequence& other) const;
-    BitSequence operator^(const BitSequence& other) const;
-    BitSequence operator~() const;
+    BitSequence<T> operator&(const BitSequence<T>& other) const;
+    BitSequence<T> operator|(const BitSequence<T>& other) const;
+    BitSequence<T> operator^(const BitSequence<T>& other) const;
+    BitSequence<T> operator~() const;
     
     Bit& operator[](size_t index);
     const Bit& operator[](size_t index) const;
-
-    Iterator<Bit> begin() override;
-    Iterator<Bit> end() override;
-    ConstIterator<Bit> begin() const override;
-    ConstIterator<Bit> end() const override;
-    ConstIterator<Bit> cbegin() const override;
-    ConstIterator<Bit> cend() const override;
+    std::unique_ptr<Iterator<Bit>> begin() override;
+    std::unique_ptr<Iterator<Bit>> end() override;
+    std::unique_ptr<ConstIterator<Bit>> begin() const override;
+    std::unique_ptr<ConstIterator<Bit>> end() const override;
+    std::unique_ptr<ConstIterator<Bit>> cbegin() const override;
+    std::unique_ptr<ConstIterator<Bit>> cend() const override;
 };
+
+#include "BitSequence.tpp"

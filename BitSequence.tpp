@@ -361,3 +361,55 @@ BitSequence<T> BitSequence<T>::operator~() const {
     auto result = Not();
     return *result;
 }
+
+template <std::integral T>
+Bit& BitSequence<T>::operator[](size_t index) {
+    throw std::runtime_error("BitSequence::operator[]: не поддерживается");
+    static Bit dummy;
+    return dummy;
+}
+
+template <std::integral T>
+const Bit& BitSequence<T>::operator[](size_t index) const {
+    throw std::runtime_error("BitSequence::operator[] const: не поддерживается");
+    static Bit dummy;
+    return dummy;
+}
+
+// ============ ИТЕРАТОРЫ - ЗАГЛУШКИ ============
+
+template <std::integral T>
+std::unique_ptr<Iterator<Bit>> BitSequence<T>::begin() {
+    throw std::runtime_error("BitSequence::begin(): итераторы не поддерживаются");
+    return nullptr;
+}
+
+template <std::integral T>
+std::unique_ptr<Iterator<Bit>> BitSequence<T>::end() {
+    throw std::runtime_error("BitSequence::end(): итераторы не поддерживаются");
+    return nullptr;
+}
+
+template <std::integral T>
+std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::begin() const {
+    throw std::runtime_error("BitSequence::begin() const: итераторы не поддерживаются");
+    return nullptr;
+}
+
+template <std::integral T>
+std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::end() const {
+    throw std::runtime_error("BitSequence::end() const: итераторы не поддерживаются");
+    return nullptr;
+}
+
+template <std::integral T>
+std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::cbegin() const {
+    throw std::runtime_error("BitSequence::cbegin(): итераторы не поддерживаются");
+    return nullptr;
+}
+
+template <std::integral T>
+std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::cend() const {
+    throw std::runtime_error("BitSequence::cend(): итераторы не поддерживаются");
+    return nullptr;
+}

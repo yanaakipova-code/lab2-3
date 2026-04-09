@@ -150,7 +150,7 @@ void LinkedList<T>::Append(T temp) {
 template<class T>
 LinkedList<T>* LinkedList<T>::GetSubList(size_t start_index, size_t end_index) const {
     if (start_index > end_index || end_index >= m_size) {
-        throw OutOfRangeException"Индекс за размером списка");
+        throw OutOfRangeException("Индекс за размером списка");
     }
 
     LinkedList<T>* sub_list = new LinkedList<T>();
@@ -267,31 +267,31 @@ void LinkedList<T>::Clear(){
 }
 
 template<class T>
-ListIterator<T> begin() {
+ListIterator<T> LinkedList<T>::begin() {
     return ListIterator<T>(m_head);
 }
- 
+
 template<class T>
-ListIterator<T> end() {
+ListIterator<T> LinkedList<T>::end() {
     return ListIterator<T>(nullptr);
 }
- 
+
 template<class T>
-ConstListIterator<T> begin() {
+ConstListIterator<T> LinkedList<T>::begin() const {
     return ConstListIterator<T>(m_head);
 }
 
 template<class T>
-ConstListIterator<T> end() {
+ConstListIterator<T> LinkedList<T>::end() const {
     return ConstListIterator<T>(nullptr);
 }
 
 template<class T>
-ConstListIterator<T> cbegin() {
+ConstListIterator<T> LinkedList<T>::cbegin() const {
     return ConstListIterator<T>(m_head);
 }
 
 template<class T>
-ConstListIterator<T> cend() {
+ConstListIterator<T> LinkedList<T>::cend() const {
     return ConstListIterator<T>(nullptr);
 }

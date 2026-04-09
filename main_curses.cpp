@@ -7,11 +7,22 @@
 
 using namespace std;
 
-extern ArraySequence<int>* g_array_seq;
-extern ListSequence<int>* g_list_seq;
-extern BitSequence* g_bit_seq;
-extern int g_current_type;
+ArraySequence<int>* g_array_seq = nullptr;
+ListSequence<int>* g_list_seq = nullptr;
+BitSequence<uint32_t>* g_bit_seq = nullptr;
+int g_current_type = 0;
 
+void DrawUI();
+void OnAppend();
+void OnPrepend();
+void OnInsert();
+void OnMap();
+void OnWhere();
+void OnReduce();
+void OnClear();
+void OnSwitchType(int type);
+string GetCurrentTypeName();
+size_t GetCurrentLength();
 
 string GetCurrentTypeName() {
     if (g_current_type == 0) return "ArraySequence";
@@ -28,36 +39,56 @@ size_t GetCurrentLength() {
 string GetContentsString() {
     string result = "";
     bool first = true;
+    size_t len = GetCurrentLength();
+    
+    // Ограничиваем вывод для больших последовательностей
+    const size_t MAX_DISPLAY = 100;
+    bool truncated = false;
+    size_t display_len = len;
+    
+    if (len > MAX_DISPLAY) {
+        display_len = MAX_DISPLAY;
+        truncated = true;
+    }
     
     if (g_current_type == 0) {
-        for (size_t i = 0; i < g_array_seq->GetLength(); i++) {
+        for (size_t i = 0; i < display_len; i++) {
             if (!first) result += ", ";
             result += to_string(g_array_seq->Get(i));
             first = false;
         }
     }
     else if (g_current_type == 1) {
-        for (size_t i = 0; i < g_list_seq->GetLength(); i++) {
+        for (size_t i = 0; i < display_len; i++) {
             if (!first) result += ", ";
             result += to_string(g_list_seq->Get(i));
             first = false;
         }
     }
     else {
-        for (size_t i = 0; i < g_bit_seq->GetLength(); i++) {
+        for (size_t i = 0; i < display_len; i++) {
             if (!first) result += ", ";
             result += g_bit_seq->GetBit(i) ? "1" : "0";
             first = false;
         }
     }
+    
+    if (truncated) {
+        result += "... (total " + to_string(len) + " elements)";
+    }
+    
     return result;
 }
 
 void DrawUI() {
     clear();
-    mvprintw(1, 0, "Type: %s", GetCurrentTypeName().c_str());
-    mvprintw(2, 0, "Length: %zu", GetCurrentLength());
-    mvprintw(4, 0, "Contents: [%s]", GetContentsString().c_str());
+    try {
+        mvprintw(1, 0, "Type: %s", GetCurrentTypeName().c_str());
+        mvprintw(2, 0, "Length: %zu", GetCurrentLength());
+        mvprintw(4, 0, "Contents: [%s]", GetContentsString().c_str());
+    } catch (const exception& e) {
+        mvprintw(4, 0, "Contents: [ERROR: %s]", e.what());
+    }
     mvprintw(6, 0, "----------------------------------------");
     mvprintw(7, 0, "COMMANDS:");
     mvprintw(8, 0,  "1 - Array     2 - List       3 - Bit");
@@ -142,7 +173,7 @@ void OnInsert() {
         else g_bit_seq->InsertAt(Bit(val != 0), idx);
         
         DrawUI();
-        mvprintw(14, 0, "Inserted at position %zu", idx);
+        mvprintw(14, 0, "Inserted at position %zu", idx + 1);
     } catch (const exception& e) {
         DrawUI();
         mvprintw(14, 0, "Error: %s", e.what());
@@ -167,7 +198,7 @@ void OnMap() {
         else {
             auto* mapped = g_bit_seq->Map(invert);
             delete g_bit_seq;
-            g_bit_seq = dynamic_cast<BitSequence*>(mapped);
+            g_bit_seq = dynamic_cast<BitSequence<uint32_t>*>(mapped);
         }
         DrawUI();
         mvprintw(14, 0, "Map completed");
@@ -195,7 +226,7 @@ void OnWhere() {
         else {
             auto* filtered = g_bit_seq->Where(isOne);
             delete g_bit_seq;
-            g_bit_seq = dynamic_cast<BitSequence*>(filtered);
+            g_bit_seq = dynamic_cast<BitSequence<uint32_t>*>(filtered);
         }
         DrawUI();
         mvprintw(14, 0, "Where completed");
@@ -251,7 +282,7 @@ void OnClear() {
         }
         else {
             delete g_bit_seq;
-            g_bit_seq = new BitSequence(0);
+            g_bit_seq = new BitSequence<uint32_t>(0);
         }
         DrawUI();
         mvprintw(14, 0, "Sequence cleared");
@@ -271,4 +302,63 @@ void OnSwitchType(int type) {
     refresh();
     getch();
     DrawUI();
+}
+
+int main() {
+    // Инициализация curses
+    initscr();
+    cbreak();
+    noecho();
+    curs_set(0);
+    keypad(stdscr, TRUE);
+    
+    // Инициализация последовательностей с начальными данными
+    g_array_seq = new ArraySequence<int>();
+    g_list_seq = new ListSequence<int>();
+    g_bit_seq = new BitSequence<uint32_t>(0);
+    
+    // Добавляем начальные данные для демонстрации
+    for (int i = 1; i <= 5; i++) {
+        g_array_seq->Append(i);
+        g_list_seq->Append(i * 10);
+    }
+    g_bit_seq->Append(Bit(true));
+    g_bit_seq->Append(Bit(false));
+    g_bit_seq->Append(Bit(true));
+    g_bit_seq->Append(Bit(true));
+    g_bit_seq->Append(Bit(false));
+    
+    DrawUI();
+    mvprintw(14, 0, "Enter the command");
+    refresh();
+    
+    int ch;
+    while ((ch = getch()) != 'q' && ch != 'Q') {
+        switch (ch) {
+            case '1': OnSwitchType(0); break;
+            case '2': OnSwitchType(1); break;
+            case '3': OnSwitchType(2); break;
+            case 'a': case 'A': OnAppend(); break;
+            case 'p': case 'P': OnPrepend(); break;
+            case 'i': case 'I': OnInsert(); break;
+            case 'm': case 'M': OnMap(); break;
+            case 'w': case 'W': OnWhere(); break;
+            case 'r': case 'R': OnReduce(); break;
+            case 'c': case 'C': OnClear(); break;
+            default:
+                mvprintw(16, 0, "Unknown command.");
+                refresh();
+                getch();
+                DrawUI();
+                break;
+        }
+    }
+    
+    // Очистка
+    delete g_array_seq;
+    delete g_list_seq;
+    delete g_bit_seq;
+    endwin();
+    
+    return 0;
 }

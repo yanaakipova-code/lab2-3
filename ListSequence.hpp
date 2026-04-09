@@ -1,20 +1,25 @@
 #pragma once
 #include <stdexcept>
 #include <cstddef>
+#include <memory>
+#include <initializer_list>
 #include "Sequence.hpp"
 #include "ListIterator.hpp"
 #include "LinkedList.hpp"
 #include "Option.hpp"
+#include "Iterator.hpp"
 
 template<class T>
 class ListSequence : public Sequence<T>{
 private:
     LinkedList<T>* m_list;
+    
 public:
-
     ListSequence(T* items, size_t count);
     ListSequence();
     ListSequence(const ListSequence<T>& other);
+    ListSequence(std::initializer_list<T> init_list) 
+        : m_list(new LinkedList<T>(init_list)) {}
 
     ~ListSequence() override;
 
@@ -39,12 +44,12 @@ public:
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
-    ListIterator<T> begin() override;
-    ListIterator<T> end() override;
-    ConstListIterator<T> begin() const override;
-    ConstListIterator<T> end() const override;
-    ConstListIterator<T> cbegin() const override;
-    ConstListIterator<T> cend() const override;
+    std::unique_ptr<Iterator<T>> begin() override;
+    std::unique_ptr<Iterator<T>> end() override;
+    std::unique_ptr<ConstIterator<T>> begin() const override;
+    std::unique_ptr<ConstIterator<T>> end() const override;
+    std::unique_ptr<ConstIterator<T>> cbegin() const override;
+    std::unique_ptr<ConstIterator<T>> cend() const override;
 };
 
 #include "ListSequence.tpp"

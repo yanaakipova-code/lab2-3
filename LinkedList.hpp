@@ -1,6 +1,11 @@
 #pragma once
+#include <initializer_list>
 #include <stdexcept>
 #include <cstddef>
+#include <memory>
+
+template<class T> class ListIterator;
+template<class T> class ConstListIterator;
 
 template<class T>
 class LinkedList {
@@ -14,20 +19,23 @@ private:
         Node(const T& value, Node* next) : data(value), next(next), prev(nullptr) {}
         Node(const T& value, Node* next, Node* prev) : data(value), next(next), prev(prev) {}
     };
+    
     Node* m_head;
     Node* m_tail;
     size_t m_size;
 
 public:
-    LinkedList (T* items, size_t count);
-    LinkedList ();
-    LinkedList (const LinkedList<T>& linked_list);
-    
+    friend class ListIterator<T>;
+    friend class ConstListIterator<T>;
+
+    LinkedList(T* items, size_t count);
+    LinkedList();
+    LinkedList(const LinkedList<T>& linked_list);
+    LinkedList(std::initializer_list<T> init_list);
     ~LinkedList();
  
     T GetFirst() const;
     T GetLast() const;
-
     Node* GetNode(size_t index) const;
     T Get(size_t index) const;
     LinkedList<T>* GetSubList(size_t start_index, size_t end_index) const;
@@ -45,14 +53,16 @@ public:
     void RemoveAt(size_t index);
     bool IsEmpty() const;
     void Clear();
+    
+    Node* GetHead() { return m_head; }
+    const Node* GetHead() const { return m_head; }
 
     ListIterator<T> begin();
     ListIterator<T> end();
-    ConstListIterator<T> begin()
-    ConstListIterator<T> end()
+    ConstListIterator<T> begin() const;
+    ConstListIterator<T> end() const;
     ConstListIterator<T> cbegin() const;
-    ConstListIterator<T> cend() const ;
-
+    ConstListIterator<T> cend() const;
 };
 
 #include "LinkedList.tpp"

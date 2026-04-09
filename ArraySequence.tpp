@@ -5,6 +5,7 @@
 #include "Error.h"
 #include <stdexcept>
 #include <cstddef>
+#include <memory>
 #include "Sequence.hpp"
 
 template<class T>
@@ -25,36 +26,6 @@ ArraySequence<T>::ArraySequence(const ArraySequence<T>& array_sequence){
 template<class T>
 ArraySequence<T>::~ArraySequence(){
     delete m_items;
-}
-
-template<class T>
-Iterator<T> ArraySequence<T>::begin() {
-    return Iterator<T>(m_items->GetData());
-}
-
-template<class T>
-Iterator<T> ArraySequence<T>::end() {
-    return Iterator<T>(m_items->GetData() + m_items->GetSize());
-}
-
-template<class T>
-ConstIterator<T> ArraySequence<T>::begin() const {
-    return ConstIterator<T>(m_items->GetData());
-}
-
-template<class T>
-ConstIterator<T> ArraySequence<T>::end() const {
-    return ConstIterator<T>(m_items->GetData() + m_items->GetSize());
-}
-
-template<class T>
-ConstIterator<T> ArraySequence<T>::cbegin() const {
-    return ConstIterator<T>(m_items->GetData());
-}
-
-template<class T>
-ConstIterator<T> ArraySequence<T>::cend() const {
-    return ConstIterator<T>(m_items->GetData() + m_items->GetSize());
 }
 
 template<class T>
@@ -86,7 +57,7 @@ size_t ArraySequence<T>::GetLength() const {
 
 template<class T>
 Sequence<T>* ArraySequence<T>::GetSubsequence(size_t start_index, size_t end_index) const {
-    if (start_index < 0 || end_index >= GetLength() || start_index > end_index) {
+    if (start_index > end_index || end_index >= GetLength()) {
         throw InvalidArgumentException("Недопустимые индексы для ArraySequence");
     }
     
@@ -95,7 +66,6 @@ Sequence<T>* ArraySequence<T>::GetSubsequence(size_t start_index, size_t end_ind
         result->Append(m_items->Get(i));
     }
     return result;
-
 }
 
 template<class T>
@@ -114,7 +84,7 @@ template<class T>
 void ArraySequence<T>::InsertAt(T temp, size_t index) {
     size_t old_size = m_items->GetSize();
     
-    if (index < 0 || index > old_size) {
+    if (index > old_size) {
         throw OutOfRangeException("Индекс за массивом");
     }
     
@@ -148,40 +118,59 @@ Sequence<T>* ArraySequence<T>::Concat(Sequence<T>* other) const {
 template<class T>
 Sequence<T>* ArraySequence<T>::Map(T (*func)(T)) {
     ArraySequence<T>* result = new ArraySequence<T>();
-    for (auto it = begin(); it != end(); ++it) {
-        result->Append(func(*it));
+    auto it = begin();
+    auto endIt = end();
+    
+    while (*it != *endIt) {
+        result->Append(func(**it));
+        ++(*it);
     }
+    
     return result;
 }
 
 template<class T>
 Sequence<T>* ArraySequence<T>::Where(bool (*predicate)(T)) {
     ArraySequence<T>* result = new ArraySequence<T>();
-    for (auto it = begin(); it != end(); ++it) {
-        T elem = *it;
+    auto it = begin();
+    auto endIt = end();
+    
+    while (*it != *endIt) {
+        T elem = **it;
         if (predicate(elem)) {
             result->Append(elem);
         }
+        ++(*it);
     }
+    
     return result;
 }
 
 template<class T>
 T ArraySequence<T>::Reduce(T (*func)(T, T), T initial) {
     T result = initial;
-    for (auto it = begin(); it != end(); ++it) {
-        result = func(result, *it);
+    auto it = begin();
+    auto endIt = end();
+    
+    while (*it != *endIt) {
+        result = func(result, **it);
+        ++(*it);
     }
+    
     return result;
 }
 
 template<class T>
 Option<T> ArraySequence<T>::TryGetFirst(bool (*predicate)(T)) const {
-    for (auto it = begin(); it != end(); ++it) {
-        T elem = *it;
+    auto it = begin();
+    auto endIt = end();
+    
+    while (*it != *endIt) {
+        T elem = **it;
         if (predicate == nullptr || predicate(elem)) {
             return Option<T>::Some(elem);
         }
+        ++(*it);
     }
     return Option<T>::None();
 }
@@ -198,7 +187,6 @@ Option<T> ArraySequence<T>::TryGetLast(bool (*predicate)(T)) const {
     return Option<T>::None();
 }
 
-// для доп баллов
 template<class T>
 T& ArraySequence<T>::operator[](size_t index) {
     return m_items->GetRef(index);
@@ -207,4 +195,42 @@ T& ArraySequence<T>::operator[](size_t index) {
 template<class T>
 const T& ArraySequence<T>::operator[](size_t index) const {
     return m_items->GetRef(index);
+}
+
+// ============= ИТЕРАТОРЫ =============
+
+template<class T>
+std::unique_ptr<Iterator<T>> ArraySequence<T>::begin() {
+    if (m_items->GetSize() == 0) {
+        return std::make_unique<ArrayIterator<T>>(nullptr);
+    }
+    return std::make_unique<ArrayIterator<T>>(m_items->GetData());
+}
+
+template<class T>
+std::unique_ptr<Iterator<T>> ArraySequence<T>::end() {
+    return std::make_unique<ArrayIterator<T>>(m_items->GetData() + m_items->GetSize());
+}
+
+template<class T>
+std::unique_ptr<ConstIterator<T>> ArraySequence<T>::begin() const {
+    if (m_items->GetSize() == 0) {
+        return std::make_unique<ConstArrayIterator<T>>(nullptr);
+    }
+    return std::make_unique<ConstArrayIterator<T>>(m_items->GetData());
+}
+
+template<class T>
+std::unique_ptr<ConstIterator<T>> ArraySequence<T>::end() const {
+    return std::make_unique<ConstArrayIterator<T>>(m_items->GetData() + m_items->GetSize());
+}
+
+template<class T>
+std::unique_ptr<ConstIterator<T>> ArraySequence<T>::cbegin() const {
+    return std::make_unique<ConstArrayIterator<T>>(m_items->GetData());
+}
+
+template<class T>
+std::unique_ptr<ConstIterator<T>> ArraySequence<T>::cend() const {
+    return std::make_unique<ConstArrayIterator<T>>(m_items->GetData() + m_items->GetSize());
 }

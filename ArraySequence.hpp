@@ -1,20 +1,22 @@
 #pragma once
 #include <stdexcept>
 #include <cstddef>
+#include <memory>
 #include "Sequence.hpp"
 #include "DynamicArray.hpp"
 #include "Option.hpp"
-#include "Iterator.hpp" 
+#include "Iterator.hpp"
+#include "ArrayIterator.hpp"
 
 template<class T>
 class ArraySequence: public Sequence<T>{
 private:
     DynamicArray<T>* m_items;
+    
 public:
     ArraySequence(T* temp, size_t count);
     ArraySequence();
     ArraySequence(const ArraySequence<T>& array_sequence);
-
     ~ArraySequence() override;
 
     T GetFirst() const override;
@@ -39,14 +41,12 @@ public:
     T& operator[](size_t index);
     const T& operator[](size_t index) const;
 
-    Iterator<T> begin() override;
-    Iterator<T> end() override;
-
-    ConstIterator<T> begin() const override;
-    ConstIterator<T> end() const override;
-
-    ConstIterator<T> cbegin() const;
-    ConstIterator<T> cend() const;
+    std::unique_ptr<Iterator<T>> begin() override;
+    std::unique_ptr<Iterator<T>> end() override;
+    std::unique_ptr<ConstIterator<T>> begin() const override;
+    std::unique_ptr<ConstIterator<T>> end() const override;
+    std::unique_ptr<ConstIterator<T>> cbegin() const override;
+    std::unique_ptr<ConstIterator<T>> cend() const override;
 };
 
 #include "ArraySequence.tpp"
