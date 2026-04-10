@@ -1,35 +1,17 @@
 #pragma once
-
+#include <bitset>
 class Bit {
 private:
-    char m_value : 1;
+    unsigned int m_mask;
 public:
-    Bit (bool value = false){
-        m_value = 0;
+    Bit() : m_mask(0) {}
+    Bit(unsigned int other): m_mask(other){}
+
+    int GetBit(size_t i) const {
+        return (m_mask >> i) & 1;
     }
 
-    char GetValue() const {
-        return m_value;
-    }
-
-    Bit operator&(const Bit& other) const {
-        return Bit((m_value & other.m_value) != 0);
-    }
-
-    Bit operator|(const Bit& other) const {
-        return Bit((m_value | other.m_value) != 0);
-    }
-
-    Bit operator^(const Bit& other) const {
-        return Bit((m_value ^ other.m_value) != 0);
-    }
-
-    Bit operator!() const {
-        return Bit(m_value == 0);
-    }
-
-    Bit& operator&=(const Bit& other) {
-        m_value &= other.m_value;
-        return *this;
+    unsigned int GetMask() const {
+        return m_mask;
     }
 };
