@@ -2,33 +2,34 @@
 
 class Bit {
 private:
-    bool m_value;
+    char m_value : 1;
 public:
-    Bit(bool value = false) : m_value(value) {}
-
-    bool GetValue() const {
-        return m_value; 
-    }
-    void SetValue(bool value) {
-         m_value = value; 
+    Bit (bool value = false){
+        m_value = 0;
     }
 
-    Bit operator&(const Bit& other) const { 
-        return Bit(m_value & other.m_value); 
+    char GetValue() const {
+        return m_value;
     }
-    
-    Bit operator|(const Bit& other) const { 
-        return Bit(m_value | other.m_value); 
+
+    Bit operator&(const Bit& other) const {
+        return Bit((m_value & other.m_value) != 0);
     }
-    
-    Bit operator^(const Bit& other) const { 
-        return Bit(m_value ^ other.m_value); 
+
+    Bit operator|(const Bit& other) const {
+        return Bit((m_value | other.m_value) != 0);
     }
-    
-    Bit operator!() const { 
-        return Bit(!m_value); 
+
+    Bit operator^(const Bit& other) const {
+        return Bit((m_value ^ other.m_value) != 0);
     }
-    operator bool() const { 
-        return m_value; 
+
+    Bit operator!() const {
+        return Bit(m_value == 0);
+    }
+
+    Bit& operator&=(const Bit& other) {
+        m_value &= other.m_value;
+        return *this;
     }
 };
