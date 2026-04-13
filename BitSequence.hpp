@@ -12,7 +12,7 @@
 #include "Iterator.hpp"
 
 template <std::integral T>
-class BitSequence : public Sequence<Bit> {
+class BitSequence : public Sequence<Bit<T>> {
 private:
     DynamicArray<T>* m_data; //указатель на конкретную ячейку
     size_t m_bit_count;// сколько всего битов 
@@ -53,23 +53,23 @@ public:
     BitSequence(const BitSequence& other);
     ~BitSequence() override;
 
-    Bit GetFirst() const override;
-    Bit GetLast() const override;
-    Bit Get(size_t index) const override;
+    Bit<T> GetFirst() const override;
+    Bit<T> GetLast() const override;
+    Bit<T> Get(size_t index) const override;
     size_t GetLength() const override;
-    Sequence<Bit>* GetSubsequence(size_t start_index, size_t end_index) const override;
+    Sequence<Bit<T>>* GetSubsequence(size_t start_index, size_t end_index) const override;
 
-    void Append(Bit temp) override;
-    void Prepend(Bit temp) override;
-    void InsertAt(Bit temp, size_t index) override;
-    Sequence<Bit>* Concat(Sequence<Bit>* other) const override;
+    void Append(Bit<T> temp) override;
+    void Prepend(Bit<T> temp) override;
+    void InsertAt(Bit<T> temp, size_t index) override;
+    Sequence<Bit<T>>* Concat(Sequence<Bit<T>>* other) const override;
 
-    Sequence<Bit>* Map(Bit (*func)(Bit)) override;
-    Sequence<Bit>* Where(bool (*predicate)(Bit)) override;
-    Bit Reduce(Bit (*func)(Bit, Bit), Bit initial) override;
+    Sequence<Bit<T>>* Map(Bit<T> (*func)(Bit<T>)) override;
+    Sequence<Bit<T>>* Where(bool (*predicate)(Bit<T>)) override;
+    Bit<T> Reduce(Bit<T> (*func)(Bit<T>, Bit<T>), Bit<T> initial) override;
 
-    Option<Bit> TryGetFirst(bool (*predicate)(Bit) = nullptr) const override;
-    Option<Bit> TryGetLast(bool (*predicate)(Bit) = nullptr) const override;
+    Option<Bit<T>> TryGetFirst(bool (*predicate)(Bit<T>) = nullptr) const override;
+    Option<Bit<T>> TryGetLast(bool (*predicate)(Bit<T>) = nullptr) const override;
 
     void SetBit(size_t index, bool value);
     bool GetBit(size_t index) const;
@@ -79,21 +79,22 @@ public:
     std::unique_ptr<BitSequence<T>> Xor(const BitSequence<T>& other) const;
     std::unique_ptr<BitSequence<T>> Not() const;
     
-    std::unique_ptr<ArraySequence<Bit>> ToMutable() const;
+    std::unique_ptr<ArraySequence<Bit<T>>> ToMutable() const;
     
     BitSequence<T> operator&(const BitSequence<T>& other) const;
     BitSequence<T> operator|(const BitSequence<T>& other) const;
     BitSequence<T> operator^(const BitSequence<T>& other) const;
     BitSequence<T> operator~() const;
     
-    Bit& operator[](size_t index);
-    const Bit& operator[](size_t index) const;
-    std::unique_ptr<Iterator<Bit>> begin() override;
-    std::unique_ptr<Iterator<Bit>> end() override;
-    std::unique_ptr<ConstIterator<Bit>> begin() const override;
-    std::unique_ptr<ConstIterator<Bit>> end() const override;
-    std::unique_ptr<ConstIterator<Bit>> cbegin() const override;
-    std::unique_ptr<ConstIterator<Bit>> cend() const override;
+    Bit<T>& operator[](size_t index);
+    const Bit<T>& operator[](size_t index) const;
+    
+    std::unique_ptr<Iterator<Bit<T>>> begin() override;
+    std::unique_ptr<Iterator<Bit<T>>> end() override;
+    std::unique_ptr<ConstIterator<Bit<T>>> begin() const override;
+    std::unique_ptr<ConstIterator<Bit<T>>> end() const override;
+    std::unique_ptr<ConstIterator<Bit<T>>> cbegin() const override;
+    std::unique_ptr<ConstIterator<Bit<T>>> cend() const override;
 };
 
 #include "BitSequence.tpp"

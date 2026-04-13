@@ -18,8 +18,6 @@ public:
     ListSequence(T* items, size_t count);
     ListSequence();
     ListSequence(const ListSequence<T>& other);
-    ListSequence(std::initializer_list<T> init_list) 
-        : m_list(new LinkedList<T>(init_list)) {}
 
     ~ListSequence() override;
 

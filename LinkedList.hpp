@@ -31,7 +31,6 @@ public:
     LinkedList(T* items, size_t count);
     LinkedList();
     LinkedList(const LinkedList<T>& linked_list);
-    LinkedList(std::initializer_list<T> init_list);
     ~LinkedList();
  
     T GetFirst() const;

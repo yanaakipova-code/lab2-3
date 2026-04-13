@@ -14,6 +14,16 @@ ListSequence<T>::ListSequence(T* items, size_t count){
 }
 
 template<class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& linked_list)
+    : LinkedList() {
+    Node* current = linked_list.m_head;
+    while (current != nullptr) {
+        Append(current->data);
+        current = current->next;
+    }
+}
+
+template<class T>
 ListSequence<T>::ListSequence() {
     m_list = new LinkedList<T>();
 }

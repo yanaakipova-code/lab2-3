@@ -8,8 +8,7 @@
 
 template <std::integral T>
 BitSequence<T>::BitSequence(bool* bits, size_t count) 
-    : m_bit_count(count)
-{
+    : m_bit_count(count) {
     size_t cells = GetCellsCount();
     m_data = new DynamicArray<T>(cells);
     
@@ -26,8 +25,7 @@ BitSequence<T>::BitSequence(bool* bits, size_t count)
 
 template <std::integral T>
 BitSequence<T>::BitSequence(size_t size) 
-    : m_bit_count(size)
-{
+    : m_bit_count(size) {
     size_t cells = GetCellsCount();
     m_data = new DynamicArray<T>(cells);
     
@@ -38,8 +36,7 @@ BitSequence<T>::BitSequence(size_t size)
 
 template <std::integral T>
 BitSequence<T>::BitSequence(const BitSequence<T>& other) 
-    : m_bit_count(other.m_bit_count)
-{
+    : m_bit_count(other.m_bit_count) {
     size_t cells = GetCellsCount();
     m_data = new DynamicArray<T>(cells);
     
@@ -54,7 +51,7 @@ BitSequence<T>::~BitSequence() {
 }
 
 template <std::integral T>
-Bit BitSequence<T>::GetFirst() const {
+Bit<T> BitSequence<T>::GetFirst() const {
     if (m_bit_count == 0) {
         throw EmptySequenceException("BitSequence пуст");
     }
@@ -62,7 +59,7 @@ Bit BitSequence<T>::GetFirst() const {
 }
 
 template <std::integral T>
-Bit BitSequence<T>::GetLast() const {
+Bit<T> BitSequence<T>::GetLast() const {
     if (m_bit_count == 0) {
         throw EmptySequenceException("BitSequence пуст");
     }
@@ -70,8 +67,8 @@ Bit BitSequence<T>::GetLast() const {
 }
 
 template <std::integral T>
-Bit BitSequence<T>::Get(size_t index) const {
-    return Bit(GetBit(index));
+Bit<T> BitSequence<T>::Get(size_t index) const {
+    return Bit<T>(GetBit(index));
 }
 
 template <std::integral T>
@@ -80,13 +77,13 @@ size_t BitSequence<T>::GetLength() const {
 }
 
 template <std::integral T>
-Sequence<Bit>* BitSequence<T>::GetSubsequence(size_t start_index, size_t end_index) const {
+Sequence<Bit<T>>* BitSequence<T>::GetSubsequence(size_t start_index, size_t end_index) const {
     if (start_index > end_index || end_index >= m_bit_count) {
-        throw std::out_of_range("BitSequence::GetSubsequence: неверные индексы");
+        throw OutOfRangeException("BitSequence::GetSubsequence: неверные индексы");
     }
     
     size_t new_size = end_index - start_index + 1;
-    BitSequence* result = new BitSequence(new_size);
+    BitSequence<T>* result = new BitSequence<T>(new_size);
     
     for (size_t i = 0; i < new_size; i++) {
         bool bit_value = GetBit(start_index + i);
@@ -97,7 +94,7 @@ Sequence<Bit>* BitSequence<T>::GetSubsequence(size_t start_index, size_t end_ind
 }
 
 template <std::integral T>
-void BitSequence<T>::Append(Bit temp) {
+void BitSequence<T>::Append(Bit<T> temp) {
     size_t new_size = m_bit_count + 1;
     size_t old_cells = GetCellsCount();
     m_bit_count = new_size;
@@ -108,16 +105,16 @@ void BitSequence<T>::Append(Bit temp) {
         m_data->Set(new_cells - 1, 0);
     }
     
-    SetBit(m_bit_count - 1, temp.GetValue());
+    SetBit(m_bit_count - 1, temp.GetBit(0));
 }
 
 template <std::integral T>
-void BitSequence<T>::Prepend(Bit temp) {
+void BitSequence<T>::Prepend(Bit<T> temp) {
     InsertAt(temp, 0);
 }
 
 template <std::integral T>
-void BitSequence<T>::InsertAt(Bit temp, size_t index) {
+void BitSequence<T>::InsertAt(Bit<T> temp, size_t index) {
     if (index > m_bit_count) {
         throw OutOfRangeException("BitSequence::InsertAt: индекс вне диапазона");
     }
@@ -137,43 +134,44 @@ void BitSequence<T>::InsertAt(Bit temp, size_t index) {
         SetBit(i, bit);
     }
     
-    SetBit(index, temp.GetValue());
+    SetBit(index, temp.GetBit(0));
 }
 
 template <std::integral T>
-Sequence<Bit>* BitSequence<T>::Concat(Sequence<Bit>* other) const {
+Sequence<Bit<T>>* BitSequence<T>::Concat(Sequence<Bit<T>>* other) const {
     if (other == nullptr) {
-        throw InvalidArgumentException("BitSequence::Concat: нулевой указатель");
+        throw NullPointerException("BitSequence::Concat: нулевой указатель");
     }
     
     size_t total_size = m_bit_count + other->GetLength();
-    BitSequence* result = new BitSequence(total_size);
+    BitSequence<T>* result = new BitSequence<T>(total_size);
+    
     for (size_t i = 0; i < m_bit_count; i++) {
         result->SetBit(i, GetBit(i));
     }
+    
     for (size_t i = 0; i < other->GetLength(); i++) {
-        bool bit_value = other->Get(i).GetValue();
-        result->SetBit(m_bit_count + i, bit_value);
+        Bit<T> bit = other->Get(i);
+        result->SetBit(m_bit_count + i, bit.GetBit(0));
     }
     
     return result;
 }
 
 template <std::integral T>
-Sequence<Bit>* BitSequence<T>::Map(Bit (*func)(Bit)) {
+Sequence<Bit<T>>* BitSequence<T>::Map(Bit<T> (*func)(Bit<T>)) {
     BitSequence<T>* result = new BitSequence<T>(m_bit_count);
     
     for (size_t i = 0; i < m_bit_count; i++) {
-        Bit transformed = func(Get(i));
-        result->SetBit(i, transformed.GetValue());
+        Bit<T> transformed = func(Get(i));
+        result->SetBit(i, transformed.GetBit(0));
     }
     
     return result;
 }
 
 template <std::integral T>
-Sequence<Bit>* BitSequence<T>::Where(bool (*predicate)(Bit)) {
-    //считаем количество подходящих элементов
+Sequence<Bit<T>>* BitSequence<T>::Where(bool (*predicate)(Bit<T>)) {
     size_t count = 0;
     for (size_t i = 0; i < m_bit_count; i++) {
         if (predicate(Get(i))) {
@@ -181,8 +179,7 @@ Sequence<Bit>* BitSequence<T>::Where(bool (*predicate)(Bit)) {
         }
     }
     
-    //создаём результат и сразу заполняем
-    BitSequence* result = new BitSequence(count);
+    BitSequence<T>* result = new BitSequence<T>(count);
     size_t result_index = 0;
     
     for (size_t i = 0; i < m_bit_count; i++) {
@@ -195,8 +192,8 @@ Sequence<Bit>* BitSequence<T>::Where(bool (*predicate)(Bit)) {
 }
 
 template <std::integral T>
-Bit BitSequence<T>::Reduce(Bit (*func)(Bit, Bit), Bit initial) {
-    Bit result = initial;
+Bit<T> BitSequence<T>::Reduce(Bit<T> (*func)(Bit<T>, Bit<T>), Bit<T> initial) {
+    Bit<T> result = initial;
     
     for (size_t i = 0; i < m_bit_count; i++) {
         result = func(result, Get(i));
@@ -206,25 +203,25 @@ Bit BitSequence<T>::Reduce(Bit (*func)(Bit, Bit), Bit initial) {
 }
 
 template <std::integral T>
-Option<Bit> BitSequence<T>::TryGetFirst(bool (*predicate)(Bit)) const {
+Option<Bit<T>> BitSequence<T>::TryGetFirst(bool (*predicate)(Bit<T>)) const {
     for (size_t i = 0; i < m_bit_count; i++) {
-        Bit elem = Get(i);
+        Bit<T> elem = Get(i);
         if (predicate == nullptr || predicate(elem)) {
-            return Option<Bit>::Some(elem);
+            return Option<Bit<T>>::Some(elem);
         }
     }
-    return Option<Bit>::None();
+    return Option<Bit<T>>::None();
 }
 
 template <std::integral T>
-Option<Bit> BitSequence<T>::TryGetLast(bool (*predicate)(Bit)) const {
+Option<Bit<T>> BitSequence<T>::TryGetLast(bool (*predicate)(Bit<T>)) const {
     for (size_t i = m_bit_count; i > 0; i--) {
-        Bit elem = Get(i - 1);
+        Bit<T> elem = Get(i - 1);
         if (predicate == nullptr || predicate(elem)) {
-            return Option<Bit>::Some(elem);
+            return Option<Bit<T>>::Some(elem);
         }
     }
-    return Option<Bit>::None();
+    return Option<Bit<T>>::None();
 }
 
 template <std::integral T>
@@ -327,16 +324,6 @@ std::unique_ptr<BitSequence<T>> BitSequence<T>::Not() const {
     return result;
 }
 
-template <std::integral T>
-std::unique_ptr<ArraySequence<Bit>> BitSequence<T>::ToMutable() const {
-    auto result = std::make_unique<ArraySequence<Bit>>();
-    
-    for (size_t i = 0; i < m_bit_count; i++) {
-        result->Append(Bit(GetBit(i)));
-    }
-    
-    return result;
-}
 
 template <std::integral T>
 BitSequence<T> BitSequence<T>::operator&(const BitSequence<T>& other) const {
@@ -363,31 +350,37 @@ BitSequence<T> BitSequence<T>::operator~() const {
 }
 
 template <std::integral T>
-std::unique_ptr<Iterator<Bit>> BitSequence<T>::begin() {
-    return std::make_unique<BitIterator<T>>(this, 0);
+std::unique_ptr<Iterator<Bit<T>>> BitSequence<T>::begin() {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }
 
 template <std::integral T>
-std::unique_ptr<Iterator<Bit>> BitSequence<T>::end() {
-    return std::make_unique<BitIterator<T>>(this, m_bit_count);
+std::unique_ptr<Iterator<Bit<T>>> BitSequence<T>::end() {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }
 
 template <std::integral T>
-std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::begin() const {
-    return std::make_unique<ConstBitIterator<T>>(this, 0);
+std::unique_ptr<ConstIterator<Bit<T>>> BitSequence<T>::begin() const {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }
 
 template <std::integral T>
-std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::end() const {
-    return std::make_unique<ConstBitIterator<T>>(this, m_bit_count);
+std::unique_ptr<ConstIterator<Bit<T>>> BitSequence<T>::end() const {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }
 
 template <std::integral T>
-std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::cbegin() const {
-    return std::make_unique<ConstBitIterator<T>>(this, 0);
+std::unique_ptr<ConstIterator<Bit<T>>> BitSequence<T>::cbegin() const {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }
 
 template <std::integral T>
-std::unique_ptr<ConstIterator<Bit>> BitSequence<T>::cend() const {
-    return std::make_unique<ConstBitIterator<T>>(this, m_bit_count);
+std::unique_ptr<ConstIterator<Bit<T>>> BitSequence<T>::cend() const {
+    throw std::runtime_error("BitSequence iterators not implemented");
+    return nullptr;
 }

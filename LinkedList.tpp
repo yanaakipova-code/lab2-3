@@ -6,6 +6,7 @@
 template<class T>
 LinkedList<T>::LinkedList() 
     : m_head(nullptr), m_tail(nullptr), m_size(0){}
+
 template<class T>
 LinkedList<T>::LinkedList (T* items, size_t count)
     : LinkedList()
@@ -26,25 +27,6 @@ LinkedList<T>::LinkedList (T* items, size_t count)
             }
             m_size++;
         }
-}
-
-template<class T>
-LinkedList<T>::LinkedList (const LinkedList<T>& linked_list)
-    : LinkedList(){
-    Node* current = linked_list.m_head;
-    while (current != nullptr) {
-        Node* new_node = new Node(current->data);
-        if (m_size == 0) {
-            m_head = new_node;
-            m_tail = new_node;
-        } else {
-            m_tail->next = new_node;
-            new_node->prev = m_tail;
-            m_tail = new_node;
-        }
-        m_size++;
-        current = current->next;
-    }
 }
 
 template<class T>
