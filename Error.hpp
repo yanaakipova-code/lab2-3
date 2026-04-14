@@ -44,3 +44,13 @@ class ZeroStepException: public Exception{
 public:
     ZeroStepException(const char* message): Exception(message) {}
 };
+
+class MatrixSquereException: public Exception{
+public:
+    MatrixSquereException(const char* message): Exception(message){}
+};
+
+class MatrixSquereSizeException: public Exception{
+public:
+    MatrixSquereSizeException(const char* message): Exception(message){}
+};
