@@ -60,6 +60,16 @@ T Quate<T, Container>::Peek(){
 }
 
 template<typename T, template<typename> class Container>
+int Quate<T, Container>::GetSize() const{
+    return m_data->GetLeght();
+}
+
+template<typename T, template<typename> class Container>
+T Quate<T, Container>::GetData(const size_t index) const{
+    return m_data.Get(index);
+}
+
+template<typename T, template<typename> class Container>
 template<typename U>
 Quate<U, Container> Quate<T, Container>::Map(U (*func)(const T&)) const{
     Quate<U, Container>() new_quate;
@@ -91,4 +101,20 @@ T Quate<T, Container>::Reduce(T (*func)(const T&, const T&)) const{
         result = func(m_data->Get(i), result);
     }
     return result;
+}
+
+template<typename T, template<typename> class Container>
+Quate<T, Container> Quate<T,Container>::Concat(Quate<T, Container>& other) const{
+    Quate<T, Container>() result = *this;
+    for(size_t i = 0; i <= m_data->GetLeght(); i++){
+        result.Enqueue(other.m_data->Get(i));
+    }
+    return result;
+}
+
+template<typename T, template<typename> class Container>
+void Quate<T, Container>::Clutch(Quate<T, Container>& other){
+    for(size_t i = 0; i < other.GetSize(); i++){
+        *this->Enqueue(other.GetData(i));
+    }
 }
