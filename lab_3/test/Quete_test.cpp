@@ -754,7 +754,6 @@ TEST_CASE("Queue: с ListSequence вместо ArraySequence") {
     REQUIRE(queue.Peek() == 20);
     REQUIRE(queue.GetSize() == 2);
 }
-// ==================== ТЕСТЫ ИСКЛЮЧЕНИЙ ====================
 
 TEST_CASE("Queue: исключения при неверных операциях") {
     Quate<int, ArraySequence> queue;
