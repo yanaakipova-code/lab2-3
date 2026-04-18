@@ -15,15 +15,16 @@ template<typename T, template<typename> class Container>
 SquareMatrix<T, Container>::SquareMatrix(size_t size) : m_size(size) {
     m_data = new Container<Container<T>>();
     
-    Container<T> emptyRow;
+    Container<T> empty_row;
     for (size_t j = 0; j < size; j++){
-        emptyRow.Append(T());
+        empty_row.Append(T());
     }
-    
+ 
     for (size_t i = 0; i < size; i++){
-        m_data->Append(emptyRow);
+        m_data->Append(empty_row);
     }
 }
+
 
 template<typename T, template<typename> class Container>
 SquareMatrix<T,Container>::SquareMatrix(initializer_list<initializer_list<T>> matrix) {
@@ -56,6 +57,7 @@ SquareMatrix<T, Container>::SquareMatrix(const SquareMatrix<T, Container>& other
     }
 }
 
+
 template<typename T, template<typename> class Container>
 SquareMatrix<T, Container>::~SquareMatrix(){
     delete m_data;  
@@ -81,6 +83,15 @@ SquareMatrix<T, Container>& SquareMatrix<T, Container>::operator=(const SquareMa
 }
 
 template<typename T, template<typename> class Container>
+void SquareMatrix<T, Container>::Set(size_t row, size_t col, T value) {
+    if(row >= m_size || col >= m_size){
+        throw OutOfRangeException("Нельзя добавить элемент за матрицу");
+    }
+    Container<T>& row_container = m_data->GetRef(row);
+    row_container.Set(col, value);
+}
+
+template<typename T, template<typename> class Container>
 T SquareMatrix<T, Container>::Get(size_t row, size_t col) const{
     if (row >= m_size || col >= m_size){
         throw OutOfRangeException("Индексы выходят за размеры масива");
@@ -94,15 +105,6 @@ size_t SquareMatrix<T, Container>::GetSize() const{
     return m_size;
 }
 
-template<typename T, template<typename> class Container>
-void SquareMatrix<T, Container>::Set(size_t row, size_t col, T value) {
-    if(row >= m_size || col >= m_size){
-        throw OutOfRangeException("Нельзя добавить элемент за матрицу");
-    }
-    Container<T> row_container = m_data->Get(row);
-    row_container.Set(col, value);
-    m_data->Set(row, row_container);
-}
 
 template<typename T, template<typename> class Container>
 SquareMatrix<T, Container> SquareMatrix<T, Container>::Sum(const SquareMatrix<T, Container>& other) const{
@@ -132,7 +134,6 @@ SquareMatrix<T, Container> SquareMatrix<T, Container>::Multiply(T value) const {
     }
     return result;
 }
-
 template<typename T, template<typename> class Container>
 SquareMatrix<T, Container> SquareMatrix<T, Container>::MultiplyRow(size_t row_number, T value) const{
     if(row_number >= m_size){
