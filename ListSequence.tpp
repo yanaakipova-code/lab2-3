@@ -24,10 +24,10 @@ ListSequence<T>::ListSequence(const ListSequence<T>& other) {
 }
 
 template<class T>
-ListSequence<T>::ListSequence(std::initializer_list<T> init) {
+ListSequence<T>::ListSequence(std::initializer_list<T> list) {
     m_list = new LinkedList<T>();
-    for (const T& value : init) {
-        m_list->Append(value);
+    for (const T& i : list) {
+        m_list->Append(i);
     }
 }
 

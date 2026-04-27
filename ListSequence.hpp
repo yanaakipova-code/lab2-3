@@ -18,7 +18,7 @@ public:
     ListSequence(T* items, size_t count);
     ListSequence();
     ListSequence(const ListSequence<T>& other);
-    ListSequence(std::initializer_list<T> init);
+    ListSequence(std::initializer_list<T> list);
     
     ~ListSequence() override;
 
