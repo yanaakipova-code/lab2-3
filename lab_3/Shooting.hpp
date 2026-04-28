@@ -2,11 +2,11 @@
 #include <cmath>
 #include <string>
 #include <sstream>
-#include "../Set.hpp"
-#include "../../Error.hpp"
+#include "Set.hpp"
+#include "../Error.hpp"
 
 const double g = 9.8;
-const double pi = 3.1415;
+const double pi = 3.14159265358979323846;
 
 struct ShootingResult{
     double v0;
@@ -29,7 +29,7 @@ struct ShootingResult{
             oss << "  Угол: " << angle << "\n";
             oss << "  Дальность: " << distance << " м\n";
         } else {
-            oss << " Точного попадания нет\n";
+            oss << " Не попали :( \n";
             oss << "  (наилучшее приближение)\n";
             oss << "  Скорость: " << v0 << " м/с\n";
             oss << "  Угол: " << angle << "\n";
@@ -46,6 +46,7 @@ double GetAlpha(double angle){
 }
 
 double GetDistance(double v0, double angle){
+    if (angle <= 0.0 || angle >= 90.0) return 0.0;
     return v0 * v0 * sin(2 * GetAlpha(angle) ) / g;
 }
 
@@ -53,27 +54,20 @@ double GetMaxDistance(double v0){
     return v0 * v0 / g;
 }
 
-bool Comparison(double a, double b){
-    double eps = 1e-10;
-    if (std::abs(a - b) < eps){
-        return true;
-    }
-    return false;
-}
-
-double FindAngle(double v0, double& x1, double& x2, size_t& iterations){
+double FindAngle(double v0, double x1, double x2, size_t& iterations){
     double left = 0.0;
     double right = 45.0;
-    double target = (x1 + x2) / 2;
+    double target_distance =( x2 + x1 )/ 2;
+    iterations = 0;
 
-    for(size_t i = 0; i < 100; i++ ){
+   for(size_t i = 0; i < 100; i++ ){
         iterations++;
         double mid = (left + right) / 2;
         double dist = GetDistance(v0, mid);
 
-        if (Comparison(dist, target)){
+        if (dist < target_distance){
             left = mid;
-        }else{
+        } else {
             right = mid;
         }
     }
@@ -82,7 +76,7 @@ double FindAngle(double v0, double& x1, double& x2, size_t& iterations){
 
 template<typename T, template<typename> class Container>
 ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities){
-
+    bool found_any = false; 
     ShootingResult best_result{};
     //если не попали, то это для нахождение минимального промаха
     double min_dist =  1e9;
@@ -91,27 +85,30 @@ ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities)
     for(const auto& v0 : velocities){
         double max_dis = GetMaxDistance(v0);
         //невозможно попасть ни при каких условиях(мы не долетели)
-        if(Comparison(max_dis, x1)){
-            throw ImpossibleToGetInException("Невозможно попасть в цель!");
+        if(max_dis < x1){
+            continue;
         }
 
         size_t iterations = 0;
         double alpha = FindAngle(v0, x1, x2, iterations);
         double dist = GetDistance(v0, alpha);
 
-        if(Comparison(x1, dist) && Comparison(dist, x2)){
+        if(dist >= x1 && dist <= x2){
+            found_any = true;
             return ShootingResult{v0, alpha, dist, true, iterations};
         }
         
         //насколько промахнулисть
         double deviation = std::abs(dist - target);
 
-        if(Comparison(deviation, min_dist)){
+        if(deviation < min_dist){
             min_dist = deviation;
             best_result = {v0, alpha, dist, false, iterations};
         }
     }
-
+    if (!found_any) {
+        throw ImpossibleToGetInException("Невозможно попасть в цель!");
+    }
     return best_result;
 
 }
