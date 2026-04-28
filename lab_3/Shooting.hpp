@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include <cmath>
+#include <string>
+#include <sstream>
 #include "../Set.hpp"
 #include "../../Error.hpp"
 
@@ -17,6 +19,26 @@ struct ShootingResult{
 
     ShootingResult(double v, double a, double d, bool s, size_t iter = 0)
         : v0{v}, angle{a}, distance{d}, success{s}, iterations{iter} {};
+
+    std::string ToString() const {
+        std::ostringstream oss;
+        
+        if (success) {
+            oss << "ПОПАДАНИЕ!\n";
+            oss << " Скорость: " << v0 << " м/с\n";
+            oss << "  Угол: " << angle << "\n";
+            oss << "  Дальность: " << distance << " м\n";
+        } else {
+            oss << " Точного попадания нет\n";
+            oss << "  (наилучшее приближение)\n";
+            oss << "  Скорость: " << v0 << " м/с\n";
+            oss << "  Угол: " << angle << "\n";
+            oss << "  Дальность: " << distance << " м\n";
+        }
+        oss << "  Итераций: " << iterations;
+        
+        return oss.str();
+    }
 };
 
 double GetAlpha(double angle){
@@ -86,7 +108,7 @@ ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities)
 
         if(Comparison(deviation, min_dist)){
             min_dist = deviation;
-            best_result{v0, alpha, dist, false, iterations};
+            best_result = {v0, alpha, dist, false, iterations};
         }
     }
 
