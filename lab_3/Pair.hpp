@@ -9,7 +9,7 @@ private:
     T first;
     U second;
 public:
-    Pair(const T& one, const U& two): first(one), second(two){}
+    Pair(const T& one, const U& two): first{one}, secon{two}  {}
 
     T GetFirst() const{
         return first;

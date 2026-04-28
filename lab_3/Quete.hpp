@@ -9,8 +9,6 @@ struct SplitInfo{
     Quate<T, Container> Que_2;
 };
 
-
-
 template<typename T, template<typename> class Container>
 class Quate{
 private:

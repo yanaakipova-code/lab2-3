@@ -5,14 +5,14 @@ template<typename T, template<typename> class Container>
 Quate<T, Container>::Quate(): m_data(new Container<T>()) {}
 
 template<typename T, template<typename> class Container>
-Quate<T, Container>::Quate(const Quate<T, Container>& other): Quate(){
+Quate<T, Container>::Quate(const Quate<T, Container>& other): Quate{}{
     for(const auto& i : other){
         m_data->Append(i);
     }
 }
 
 template<typename T, template<typename> class Container>
-Quate<T, Container>::Quate(const Container<T>& other): Quate(){
+Quate<T, Container>::Quate(const Container<T>& other): Quate{}{
     for(const auto& i : other){
         m_data->Append(i);
     }

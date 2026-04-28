@@ -7,12 +7,12 @@
 using namespace std;
 
 template<typename T, template<typename> class Container>
-SquareMatrix<T, Container>::SquareMatrix() : m_size(0) {
+SquareMatrix<T, Container>::SquareMatrix() : m_size{0} {
     m_data = new Container<Container<T>>();
 }
 
 template<typename T, template<typename> class Container>
-SquareMatrix<T, Container>::SquareMatrix(size_t size) : m_size(size) {
+SquareMatrix<T, Container>::SquareMatrix(size_t size) : m_size{size} {
     m_data = new Container<Container<T>>();
     
     Container<T> empty_row;

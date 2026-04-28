@@ -12,11 +12,11 @@ private:
     U m_re;
     U m_im;
 public:
-    Complex() : m_re(0), m_im(0) {}
+    Complex() : m_re{0}, m_im{0} {}
     
-    Complex(U re, U im) : m_re(re), m_im(im) {}
+    Complex(U re, U im) : m_re{re}, m_im{im} {}
     
-    Complex(const Complex& other) : m_re(other.m_re), m_im(other.m_im) {}
+    Complex(const Complex& other) : m_re{other.m_re}, m_im{other.m_im} {}
     
     ~Complex() {}
 

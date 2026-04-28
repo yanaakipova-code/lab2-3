@@ -4,14 +4,14 @@ template<typename T, template<typename> class Container>
 Set<T, Container>::Set(): m_data(new Container<T>()){}
 
 template<typename T, template<typename> class Container>
-Set<T, Container>::Set(const Container<T>& other): Set(){
+Set<T, Container>::Set(const Container<T>& other): Set{}{
     for(const auto& i : other){
         Add(i);
     }
 }
 
 template<typename T, template<typename> class Container>
-Set<T, Container>::Set(const Set<T, Container>& other):Set(){
+Set<T, Container>::Set(const Set<T, Container>& other):Set{}{
     for(const auto& i : other){
         m_data->Append(i);
     }

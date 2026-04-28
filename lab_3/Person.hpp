@@ -17,11 +17,11 @@ private:
     string m_patronymic;
     time_t m_date;
 public:
-    Person():m_id(),m_name(""), m_surname(""), m_patronymic(""),m_date(0){}
+    Person():m_id{},m_name{""}, m_surname{""}, m_patronymic{""},m_date{0}{}
 
     Person(const PersonID& id, const string& name, const string& surname, 
-            const string& patronymic, time_t date):m_id(id),m_name(name), 
-            m_surname(surname), m_patronymic(patronymic),m_date(date){}
+            const string& patronymic, time_t date):m_id{id},m_name{name}, 
+            m_surname{surname}, m_patronymic{patronymic},m_date{date} {}
 
     string GetName() const{ return m_name; };
     string GetSurName() const{return m_surname;};
