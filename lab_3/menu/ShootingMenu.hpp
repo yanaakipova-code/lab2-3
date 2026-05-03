@@ -77,4 +77,38 @@ Set<double, ArraySequence> InputVelocities() {
     return velocities;
 }
 
+void ShowShootingResult(const ShootingResult& result, double x1, double x2) {
+    clear();
+    DrawBorder();
+    
+    mvprintw(2, 2, "=== РЕЗУЛЬТАТ ПРИСТРЕЛКИ ===");
+    mvprintw(4, 2, "Цель: [%.2f, %.2f] метров", x1, x2);
+    mvprintw(5, 2, "Центр цели: %.2f метров", (x1 + x2) / 2);
+    mvprintw(7, 2, "----------------------------------------");
+    
+    if (result.success) {
+        attron(A_BOLD | A_REVERSE);
+        mvprintw(9, 2, " ПОПАДАНИЕ! ");
+        attroff(A_BOLD | A_REVERSE);
+    } else {
+        attron(A_BOLD);
+        mvprintw(9, 2, "Точного попадания нет");
+        attroff(A_BOLD);
+        mvprintw(10, 2, "  (наилучшее приближение)");
+    }
+    
+    mvprintw(12, 2, "----------------------------------------");
+    mvprintw(13, 2, "Начальная скорость: %.2f м/с", result.v0);
+    mvprintw(14, 2, "Угол:               %.2f°", result.angle);
+    mvprintw(15, 2, "Дальность полета:   %.2f м", result.distance);
+    mvprintw(16, 2, "Итераций:           %zu", result.iterations);
+    
+    double deviation = result.distance - (x1 + x2) / 2;
+    mvprintw(17, 2, "Отклонение от центра: %.2f м", deviation);
+    
+    mvprintw(19, 2, "----------------------------------------");
+    mvprintw(21, 2, "Нажмите любую клавишу для продолжения...");
+    refresh();
+    getch();
+}
 
