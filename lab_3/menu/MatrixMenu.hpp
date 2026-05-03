@@ -3,6 +3,8 @@
 #include "../Matrix.hpp"
 #include "../../ListSequence.hpp"
 #include "../../Error.hpp"
+#include "../Complex.hpp"
+#include "ComplexInput.hpp"
 #include <type_traits>
 #include <functional>
 
@@ -24,6 +26,16 @@ void MatrixMenuWithType(const string& typeName) {
                 matrix->Set(i, j, (i * 3 + j + 1) * 1.5);
             }
         }
+    } else if constexpr (is_same<T, Complex<double>>::value) {
+        matrix->Set(0, 0, Complex<double>(1, 1));
+        matrix->Set(0, 1, Complex<double>(2, 0));
+        matrix->Set(0, 2, Complex<double>(3, -1));
+        matrix->Set(1, 0, Complex<double>(0, 2));
+        matrix->Set(1, 1, Complex<double>(5, 0));
+        matrix->Set(1, 2, Complex<double>(1, 1));
+        matrix->Set(2, 0, Complex<double>(2, 2));
+        matrix->Set(2, 1, Complex<double>(0, 0));
+        matrix->Set(2, 2, Complex<double>(4, -1));
     }
     
     const char* items[] = {
@@ -49,7 +61,7 @@ void MatrixMenuWithType(const string& typeName) {
         try {
             switch (choice) {
                 case 0: {
-                    std::function<T(size_t, size_t)> getter = [matrix](size_t i, size_t j) -> T {
+                    function<T(size_t, size_t)> getter = [matrix](size_t i, size_t j) -> T {
                         return matrix->Get(i, j);
                     };
                     DisplayMatrixGeneric<T>("Матрица", matrix->GetSize(), getter);
@@ -59,17 +71,29 @@ void MatrixMenuWithType(const string& typeName) {
                     int row = InputNumber("Введите строку (0-based)");
                     int col = InputNumber("Введите столбец (0-based)");
                     T val = matrix->Get(row, col);
-                    ShowMessage("Элемент [" + to_string(row) + "][" + to_string(col) + "] = " + to_string(val));
+                    
+                    if constexpr (is_same<T, int>::value) {
+                        ShowMessage("Элемент [" + to_string(row) + "][" + to_string(col) + "] = " + to_string(val));
+                    } else if constexpr (is_same<T, double>::value) {
+                        ShowMessage("Элемент [" + to_string(row) + "][" + to_string(col) + "] = " + to_string(val));
+                    } else if constexpr (is_same<T, Complex<double>>::value) {
+                        ShowMessage("Элемент [" + to_string(row) + "][" + to_string(col) + "] = " + ComplexToString(val));
+                    }
                     break;
                 }
                 case 2: {
                     int row = InputNumber("Введите строку");
                     int col = InputNumber("Введите столбец");
                     T val;
+                    
                     if constexpr (is_same<T, int>::value) {
                         val = InputNumber("Введите значение");
                     } else if constexpr (is_same<T, double>::value) {
                         val = InputDouble("Введите значение");
+                    } else if constexpr (is_same<T, Complex<double>>::value) {
+                        double re = InputDouble("Введите действительную часть");
+                        double im = InputDouble("Введите мнимую часть");
+                        val = Complex<double>(re, im);
                     }
                     matrix->Set(row, col, val);
                     ShowMessage("Установлено");
@@ -78,6 +102,7 @@ void MatrixMenuWithType(const string& typeName) {
                 case 3: {
                     ShowMessage("Создайте матрицу 3x3 для сложения:");
                     SquareMatrix<T, ListSequence> other(3);
+                    
                     for (size_t i = 0; i < 3; i++) {
                         for (size_t j = 0; j < 3; j++) {
                             T val;
@@ -85,6 +110,10 @@ void MatrixMenuWithType(const string& typeName) {
                                 val = InputNumber("Элемент [" + to_string(i) + "][" + to_string(j) + "]");
                             } else if constexpr (is_same<T, double>::value) {
                                 val = InputDouble("Элемент [" + to_string(i) + "][" + to_string(j) + "]");
+                            } else if constexpr (is_same<T, Complex<double>>::value) {
+                                double re = InputDouble("Элемент [" + to_string(i) + "][" + to_string(j) + "] (действительная часть)");
+                                double im = InputDouble("Элемент [" + to_string(i) + "][" + to_string(j) + "] (мнимая часть)");
+                                val = Complex<double>(re, im);
                             }
                             other.Set(i, j, val);
                         }
@@ -95,20 +124,35 @@ void MatrixMenuWithType(const string& typeName) {
                     break;
                 }
                 case 4: {
-                    T scalar;
                     if constexpr (is_same<T, int>::value) {
-                        scalar = InputNumber("Введите скаляр");
+                        T scalar = InputNumber("Введите скаляр");
+                        auto result = matrix->Multiply(scalar);
+                        *matrix = result;
+                        ShowMessage("Умножено на " + to_string(scalar));
                     } else if constexpr (is_same<T, double>::value) {
-                        scalar = InputDouble("Введите скаляр");
+                        T scalar = InputDouble("Введите скаляр");
+                        auto result = matrix->Multiply(scalar);
+                        *matrix = result;
+                        ShowMessage("Умножено на " + to_string(scalar));
+                    } else if constexpr (is_same<T, Complex<double>>::value) {
+                        double re = InputDouble("Введите действительную часть скаляра");
+                        double im = InputDouble("Введите мнимую часть скаляра");
+                        T scalar(re, im);
+                        auto result = matrix->Multiply(scalar);
+                        *matrix = result;
+                        ShowMessage("Умножено на " + ComplexToString(scalar));
                     }
-                    auto result = matrix->Multiply(scalar);
-                    *matrix = result;
-                    ShowMessage("Умножено на " + to_string(scalar));
                     break;
                 }
                 case 5: {
                     T norm = matrix->MatrixNorm();
-                    ShowMessage("Норма матрицы: " + to_string(norm));
+                    if constexpr (is_same<T, int>::value) {
+                        ShowMessage("Норма матрицы: " + to_string(norm));
+                    } else if constexpr (is_same<T, double>::value) {
+                        ShowMessage("Норма матрицы: " + to_string(norm));
+                    } else if constexpr (is_same<T, Complex<double>>::value) {
+                        ShowMessage("Норма матрицы: " + to_string(norm.GetRe()));
+                    }
                     break;
                 }
                 case 6: {
@@ -120,10 +164,29 @@ void MatrixMenuWithType(const string& typeName) {
             }
         } catch (const Exception& e) {
             ShowMessage(string("Ошибка: ") + e.what(), true);
+        } catch (const std::exception& e) {
+            ShowMessage(string("STL Ошибка: ") + e.what(), true);
+        } catch (...) {
+            ShowMessage("Неизвестная ошибка!", true);
         }
     }
 }
 
 void MatrixMenu() {
-    MatrixMenuWithType<int>("int");
+    const char* typeItems[] = {
+        "Целые числа (int)",
+        "Вещественные числа (double)",
+        "Комплексные числа (Complex)",
+        "← Назад"
+    };
+    
+    int choice = RunMenu("ВЫБЕРИТЕ ТИП МАТРИЦЫ", typeItems, 4);
+    
+    if (choice == 0) {
+        MatrixMenuWithType<int>("int");
+    } else if (choice == 1) {
+        MatrixMenuWithType<double>("double");
+    } else if (choice == 2) {
+        MatrixMenuWithType<Complex<double>>("Complex");
+    }
 }
