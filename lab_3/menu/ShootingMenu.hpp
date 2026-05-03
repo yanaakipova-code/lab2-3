@@ -164,3 +164,95 @@ void ShowVelocitiesTable(double x1, double x2, const Set<double, ArraySequence>&
     getch();
 }
 
+void RunShootingMenu() {
+    const char* items[] = {
+        "Найти оптимальный выстрел",
+        "Показать таблицу всех скоростей",
+        "Ввести новый список скоростей",
+        "← Назад"
+    };
+    
+    static Set<double, ArraySequence> velocities;
+    static bool velocities_initialized = false;
+    
+    if (!velocities_initialized) {
+        velocities.Add(20.0);
+        velocities.Add(25.0);
+        velocities.Add(30.0);
+        velocities.Add(35.0);
+        velocities.Add(40.0);
+        velocities.Add(45.0);
+        velocities_initialized = true;
+    }
+    
+    while (true) {
+        int choice = RunMenu("РАСЧЕТ ТРАЕКТОРИИ ПОЛЕТА (ПРИСТРЕЛКА)", items, 4);
+        
+        if (choice == -1 || choice == 3) break;
+        
+        if (choice == 0) {
+            clear();
+            DrawBorder();
+            
+            mvprintw(2, 2, "=== ВВОД ПАРАМЕТРОВ ЦЕЛИ ===");
+            refresh();
+            
+            double x1 = InputDouble("Левая граница (x1)");
+            double x2 = InputDouble("Правая граница (x2)");
+            
+            if (x1 >= x2) {
+                ShowMessage("Ошибка: x1 должно быть меньше x2!", true);
+                continue;
+            }
+            
+            if (velocities.GetSize() == 0) {
+                ShowMessage("Список скоростей пуст! Введите скорости.", true);
+                velocities = InputVelocities();
+                if (velocities.GetSize() == 0) {
+                    ShowMessage("Нет скоростей для расчета!", true);
+                    continue;
+                }
+            }
+            
+            try {
+                ShootingResult result = FindShooting(x1, x2, velocities);
+                ShowShootingResult(result, x1, x2);
+            } catch (const ImpossibleToGetInException& e) {
+                ShowMessage(string("Ошибка: ") + e.what(), true);
+            } catch (const std::exception& e) {
+                ShowMessage(string("Ошибка: ") + e.what(), true);
+            }
+        }
+        else if (choice == 1) {
+            if (velocities.GetSize() == 0) {
+                ShowMessage("Список скоростей пуст! Сначала введите скорости.", true);
+                velocities = InputVelocities();
+                if (velocities.GetSize() == 0) {
+                    continue;
+                }
+            }
+            
+            clear();
+            DrawBorder();
+            
+            double x1 = InputDouble("Левая граница (x1)");
+            double x2 = InputDouble("Правая граница (x2)");
+            
+            if (x1 >= x2) {
+                ShowMessage("Ошибка: x1 должно быть меньше x2!", true);
+                continue;
+            }
+            
+            try {
+                ShowVelocitiesTable(x1, x2, velocities);
+            } catch (const std::exception& e) {
+                ShowMessage(string("Ошибка: ") + e.what(), true);
+            }
+        }
+        else if (choice == 2) {
+            velocities = InputVelocities();
+            velocities_initialized = true;
+        }
+    }
+}
+
