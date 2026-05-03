@@ -224,16 +224,29 @@ SquareMatrix<T, Container> SquareMatrix<T, Container>::SwapCol(size_t col_n1, si
 
 template<typename T, template<typename> class Container>
 T SquareMatrix<T, Container>::MatrixNorm() const{
-    T max_value = 0;
-    for (size_t i = 0; i < m_size; i++){
-        for(size_t j = 0; j < m_size; j++){
-            T value = std::abs(Get(i,j));
-            if(value > max_value){
-                max_value = value;
+    if constexpr (std::is_same_v<T, Complex<double>>) {
+        double max_value = 0;
+        for (size_t i = 0; i < m_size; i++){
+            for(size_t j = 0; j < m_size; j++){
+                double value = Get(i, j).Abs();
+                if(value > max_value){
+                    max_value = value;
+                }
             }
         }
+        return Complex<double>(max_value, 0);
+    } else {
+        T max_value = 0;
+        for (size_t i = 0; i < m_size; i++){
+            for(size_t j = 0; j < m_size; j++){
+                T value = std::abs(Get(i, j));
+                if(value > max_value){
+                    max_value = value;
+                }
+            }
+        }
+        return max_value;
     }
-    return max_value;
 }
 
 template<typename T, template<typename> class Container>
