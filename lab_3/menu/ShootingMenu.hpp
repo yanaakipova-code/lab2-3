@@ -112,3 +112,55 @@ void ShowShootingResult(const ShootingResult& result, double x1, double x2) {
     getch();
 }
 
+void ShowVelocitiesTable(double x1, double x2, const Set<double, ArraySequence>& velocities) {
+    clear();
+    DrawBorder();
+    
+    mvprintw(2, 2, "=== ТАБЛИЦА ПРОВЕРКИ СКОРОСТЕЙ ===");
+    mvprintw(3, 2, "Цель: [%.2f, %.2f] метров", x1, x2);
+    
+    mvprintw(5, 2, "----------------------------------------");
+    mvprintw(6, 2, "Скорость | Макс.дальн | Угол    | Дальность | Результат");
+    mvprintw(7, 2, "----------------------------------------");
+    
+    int line = 8;
+    
+    for (const auto& v0 : velocities) {
+        double max_range = GetMaxDistance(v0);
+        
+        if (max_range < x1 - 1e-6) {
+            mvprintw(line++, 2, "  %.2f    |   %.2f    | не долетает", v0, max_range);
+        } else {
+            size_t iterations = 0;
+            double alpha = FindAngle(v0, x1, x2, iterations);
+            double dist = GetDistance(v0, alpha);
+            
+            if (dist >= x1 - 1e-6 && dist <= x2 + 1e-6) {
+                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | ✓ ПОПАДАНИЕ", 
+                         v0, max_range, alpha, dist);
+            } else {
+                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | мимо", 
+                         v0, max_range, alpha, dist);
+            }
+        }
+        
+        if (line > LINES - 5) {
+            mvprintw(LINES - 3, 2, "Нажмите Enter для продолжения...");
+            refresh();
+            getch();
+            clear();
+            DrawBorder();
+            mvprintw(2, 2, "=== ТАБЛИЦА ПРОВЕРКИ СКОРОСТЕЙ (продолжение) ===");
+            mvprintw(4, 2, "----------------------------------------");
+            mvprintw(5, 2, "Скорость | Макс.дальн | Угол    | Дальность | Результат");
+            mvprintw(6, 2, "----------------------------------------");
+            line = 7;
+        }
+    }
+    
+    mvprintw(line + 2, 2, "----------------------------------------");
+    mvprintw(line + 4, 2, "Нажмите любую клавишу для продолжения...");
+    refresh();
+    getch();
+}
+
