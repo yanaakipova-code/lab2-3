@@ -22,6 +22,7 @@ public:
     Person(const PersonID& id, const string& name, const string& surname, 
             const string& patronymic, time_t date):m_id{id},m_name{name}, 
             m_surname{surname}, m_patronymic{patronymic},m_date{date} {}
+    Person(const Person& other) = default;
 
     string GetName() const{ return m_name; };
     string GetSurName() const{return m_surname;};
