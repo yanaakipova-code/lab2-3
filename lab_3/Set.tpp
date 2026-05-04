@@ -23,12 +23,12 @@ Set<T, Container>::~Set(){
 }
 
 template<typename T, template<typename> class Container>
-unsigned int Set<T, Container>::GetSize() const{
+size_t Set<T, Container>::GetSize() const{
     return m_data->GetLength();
 }
 
 template<typename T, template<typename> class Container>
-T Set<T, Container>::GetData(unsigned int index) const{
+T Set<T, Container>::GetData(size_t index) const{
     return m_data->Get(index);
 }
 
@@ -41,7 +41,7 @@ void Set<T, Container>::Add(const T& value){
 }
 
 template<typename T, template<typename> class Container>
-void Set<T, Container>::RemoveByIndex(int index){
+void Set<T, Container>::RemoveByIndex(size_t index){
     if(index >= GetSize()){
         throw OutOfRangeException("Индекс за пределами множества");
     }

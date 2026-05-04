@@ -66,7 +66,7 @@ int Quate<T, Container>::GetSize() const{
 }
 
 template<typename T, template<typename> class Container>
-T Quate<T, Container>::GetData(const int index) const{
+T Quate<T, Container>::GetData(const size_t index) const{
     return m_data->Get(index);
 }
 
@@ -121,7 +121,7 @@ void Quate<T, Container>::Clutch(Quate<T, Container>& other){
 }
 
 template<typename T, template<typename> class Container>
-Quate<T, Container> Quate<T, Container>::Extraction(int begin, int end) const{
+Quate<T, Container> Quate<T, Container>::Extraction(size_t begin, size_t end) const{
     if (begin < 0 || end < 0 || begin > end || begin >= GetSize() || end >= GetSize()){
         throw OutOfRangeException("индексы выходят за перделы очереди");
     }

@@ -54,6 +54,14 @@ double GetMaxDistance(double v0){
     return v0 * v0 / g;
 }
 
+// bool Comparison(double a, double b){
+//     double eps = 1e-10;
+//     if (std::abs(a - b) < eps){
+//         return true;
+//     }
+//     return false;
+// }
+
 double FindAngle(double v0, double x1, double x2, size_t& iterations){
     double left = 0.0;
     double right = 45.0;

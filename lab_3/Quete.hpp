@@ -24,7 +24,7 @@ public:
     bool IsEmpty() const;
 
     int GetSize() const;
-    T GetData(const int index) const;
+    T GetData(const size_t index) const;
 
     T Peek() const;
 
@@ -36,7 +36,7 @@ public:
     Quate<T, Container> Concat(Quate<T, Container>& other) const;
     void Clutch(Quate<T, Container>& other);
 
-    Quate<T, Container> Extraction(int begin, int end) const;
+    Quate<T, Container> Extraction(size_t begin, size_t end) const;
     bool Check(Quate<T, Container>& other) const;
     SplitInfo<T, Container> Split(bool (*func)(const T&)) const;
 

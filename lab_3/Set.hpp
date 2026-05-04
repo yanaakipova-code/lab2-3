@@ -11,11 +11,11 @@ public:
     Set(const Set<T, Container>& other);
     ~Set();
 
-    unsigned int GetSize() const;
-    T GetData(unsigned int index) const;
+    size_t GetSize() const;
+    T GetData(size_t index) const;
 
     void Add(const T& value);
-    void RemoveByIndex(int index);
+    void RemoveByIndex(size_t index);
     void RemoveByValue(const T& vaiue);
     bool Contains(const T& value) const;
 

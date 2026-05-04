@@ -69,3 +69,8 @@ class  DivisionByZeroException: public Exception{
 public:
     DivisionByZeroException(const char* message): Exception(message){}
 };
+
+class  ImpossibleToGetInException: public Exception{
+public:
+    ImpossibleToGetInException(const char* message): Exception(message){}
+};
