@@ -1,11 +1,14 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -g -I..
 
-TESTS = test_Complex.exe test_Matrix.exe test_Quete.exe test_Set.exe
+TESTS = test_Complex.exe test_Matrix.exe test_Quete.exe test_Set.exe test_shooting.exe
 
 .PHONY: all clean run
 
 all: $(TESTS)
+
+test_shooting.exe: Shooting_test.cpp
+	$(CXX) $(CXXFLAGS) -D CATCH_CONFIG_MAIN $< -o $@
 
 test_Complex.exe: Complex_test.cpp
 	$(CXX) $(CXXFLAGS) -D CATCH_CONFIG_MAIN $< -o $@
