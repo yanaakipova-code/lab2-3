@@ -21,23 +21,22 @@ struct ShootingResult{
         : v0{v}, angle{a}, distance{d}, success{s}, iterations{iter} {};
 
     std::string ToString() const {
-        std::ostringstream oss;
-        
         if (success) {
-            oss << "ПОПАДАНИЕ!\n";
-            oss << " Скорость: " << v0 << " м/с\n";
-            oss << "  Угол: " << angle << "\n";
-            oss << "  Дальность: " << distance << " м\n";
+            return std::format("ПОПАДАНИЕ!\n"
+                           "  Скорость: {} м/с\n"
+                           "  Угол: {}°\n"
+                           "  Дальность: {} м\n"
+                           "  Итераций: {}", 
+                           v0, angle, distance, iterations);
         } else {
-            oss << " Не попали :( \n";
-            oss << "  (наилучшее приближение)\n";
-            oss << "  Скорость: " << v0 << " м/с\n";
-            oss << "  Угол: " << angle << "\n";
-            oss << "  Дальность: " << distance << " м\n";
+            return std::format("Не попали :(\n"
+                           "  (наилучшее приближение)\n"
+                           "  Скорость: {} м/с\n"
+                           "  Угол: {}°\n"
+                           "  Дальность: {} м\n"
+                           "  Итераций: {}", 
+                           v0, angle, distance, iterations);
         }
-        oss << "  Итераций: " << iterations;
-        
-        return oss.str();
     }
     operator std::string() const {
         return ToString();

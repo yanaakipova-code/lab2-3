@@ -1,6 +1,7 @@
 #pragma once
 #include <ctime>
 #include <stdexcept>
+#include <format>
 
 using namespace std;
 
@@ -37,13 +38,12 @@ public:
     void SetDate(time_t date) { m_date = date; }
 
     string GetFullName() const{
-        return m_name + " " + m_surname + " " + m_patronymic;
+        return std::format("{} {} {}", m_name, m_surname, m_patronymic);
     }
 
     string ToString() const{
-        string res = "Id(number): " + to_string(m_id.number) + "Id(series): " + to_string(m_id.series) +
-                ",full name: " + GetFullName() + ", date:" + to_string(m_date);
-        return res;
+        return std::format("Id(number): {}, Id(series): {}, full name: {}, date: {}", 
+                       m_id.number, m_id.series, GetFullName(), m_date);
     }
 
     bool operator==(const Person& other) const {

@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <sstream>
+#include <format>
 
 template<typename T, typename U>
 
@@ -27,9 +28,6 @@ public:
     }
 
     std::string ToString() const{
-        std::ostringstream oss;
-        oss << "(" first << " " << second << ")";
-
-        return oss.str();
+        return std::format("({} {})", first, second);
     }
 };
