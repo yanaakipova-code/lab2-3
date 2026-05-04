@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -std=c++20 -g -I"C:/PDCurses-3.9" -DPDC_WIDE
+CXXFLAGS = -std=c++20 -g -I"C:/PDCurses-3.9" -DPDC_WIDE
 LDFLAGS = -L"C:/PDCurses-3.9/wincon" -l:pdcurses.a
 
 TARGET = lab3.exe

@@ -78,13 +78,12 @@ template<typename T, template<typename> class Container>
 ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities){
     bool found_any = false; 
     ShootingResult best_result{};
-    //если не попали, то это для нахождение минимального промаха
+
     double min_dist =  1e9;
     double target = (x2 + x1)/2;
 
     for(const auto& v0 : velocities){
         double max_dis = GetMaxDistance(v0);
-        //невозможно попасть ни при каких условиях(мы не долетели)
         if(max_dis < x1){
             continue;
         }
@@ -97,8 +96,6 @@ ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities)
             found_any = true;
             return ShootingResult{v0, alpha, dist, true, iterations};
         }
-        
-        //насколько промахнулисть
         double deviation = std::abs(dist - target);
 
         if(deviation < min_dist){

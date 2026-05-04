@@ -136,7 +136,7 @@ void ShowVelocitiesTable(double x1, double x2, const Set<double, ArraySequence>&
             double dist = GetDistance(v0, alpha);
             
             if (dist >= x1 - 1e-6 && dist <= x2 + 1e-6) {
-                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | ✓ ПОПАДАНИЕ", 
+                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | ПОПАДАНИЕ", 
                          v0, max_range, alpha, dist);
             } else {
                 mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | мимо", 
