@@ -35,6 +35,7 @@ public:
 
     bool operator==(const SquareMatrix<T, Container>& other) const;
     bool operator!=(const SquareMatrix<T, Container>& other) const;
+    T& operator()(size_t row, size_t col);
 
     T MatrixNorm() const;
 

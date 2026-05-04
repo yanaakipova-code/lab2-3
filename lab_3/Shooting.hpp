@@ -39,6 +39,9 @@ struct ShootingResult{
         
         return oss.str();
     }
+    operator std::string() const {
+        return ToString();
+    }
 };
 
 double GetAlpha(double angle){

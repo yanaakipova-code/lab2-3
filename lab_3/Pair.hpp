@@ -23,7 +23,7 @@ public:
     }
 
     bool operator!=(const Pair& other){
-        return !5(other == *this);
+        return !(other == *this);
     }
 
     std::string ToString() const{

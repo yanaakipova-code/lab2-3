@@ -17,7 +17,7 @@ SquareMatrix<T, Container>::SquareMatrix(size_t size) : m_size{size} {
     
     Container<T> empty_row;
     for (size_t j = 0; j < size; j++){
-        empty_row.Append(T());
+        empty_row.Append(T{});
     }
  
     for (size_t i = 0; i < size; i++){
@@ -222,6 +222,9 @@ SquareMatrix<T, Container> SquareMatrix<T, Container>::SwapCol(size_t col_n1, si
     return result;
 }
 
+template<typename U>
+class Complex;
+
 template<typename T, template<typename> class Container>
 T SquareMatrix<T, Container>::MatrixNorm() const{
     if constexpr (std::is_same_v<T, Complex<double>>) {
@@ -263,6 +266,15 @@ bool SquareMatrix<T, Container>::operator==(const SquareMatrix<T, Container>& ot
         }
     }
     return true;
+}
+
+template<typename T, template<typename> class Container>
+T& SquareMatrix<T, Container>::operator()(size_t row, size_t col) {
+    if (row >= m_size || col >= m_size) {
+        throw OutOfRangeException("Индексы выходят за пределы матрицы");
+    }
+    Container<T>& row_container = m_data->GetRef(row);
+    return row_container.GetRef(col);
 }
 
 template<typename T, template<typename> class Container>

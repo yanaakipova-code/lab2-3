@@ -27,15 +27,15 @@ void MatrixMenuWithType(const string& typeName) {
             }
         }
     } else if constexpr (is_same<T, Complex<double>>::value) {
-        matrix->Set(0, 0, Complex<double>(1, 1));
-        matrix->Set(0, 1, Complex<double>(2, 0));
-        matrix->Set(0, 2, Complex<double>(3, -1));
-        matrix->Set(1, 0, Complex<double>(0, 2));
-        matrix->Set(1, 1, Complex<double>(5, 0));
-        matrix->Set(1, 2, Complex<double>(1, 1));
-        matrix->Set(2, 0, Complex<double>(2, 2));
-        matrix->Set(2, 1, Complex<double>(0, 0));
-        matrix->Set(2, 2, Complex<double>(4, -1));
+        (*matrix)(0, 0) = Complex<double>(1, 1);
+        (*matrix)(0, 1) = Complex<double>(2, 0);
+        (*matrix)(0, 2) = Complex<double>(3, -1);
+        (*matrix)(1, 0) = Complex<double>(0, 2);
+        (*matrix)(1, 1) = Complex<double>(5, 0);
+        (*matrix)(1, 2) = Complex<double>(1, 1);
+        (*matrix)(2, 0) = Complex<double>(2, 2);
+        (*matrix)(2, 1) = Complex<double>(0, 0);
+        (*matrix)(2, 2) = Complex<double>(4, -1);
     }
     
     const char* items[] = {

@@ -2,6 +2,7 @@
 #include "../../Error.hpp"
 #include "../Matrix.hpp"
 #include "../ListSequence.hpp"
+#include "../Complex.hpp"
 
 
 TEST_CASE("Матрица: конструктор по умолчанию") {
@@ -296,5 +297,78 @@ TEST_CASE("Матрица с типом double") {
     
     auto result = mat.Multiply(2.0);
     REQUIRE(result.Get(0, 0) == Approx(3.0));
+}
+
+TEST_CASE("Matrix: оператор () для доступа и изменения элементов") {
+    SquareMatrix<int, ListSequence> mat(3);
+    
+    mat(0, 0) = 1;
+    mat(0, 1) = 2;
+    mat(0, 2) = 3;
+    mat(1, 0) = 4;
+    mat(1, 1) = 5;
+    mat(1, 2) = 6;
+    mat(2, 0) = 7;
+    mat(2, 1) = 8;
+    mat(2, 2) = 9;
+    
+    REQUIRE(mat(0, 0) == 1);
+    REQUIRE(mat(0, 1) == 2);
+    REQUIRE(mat(0, 2) == 3);
+    REQUIRE(mat(1, 0) == 4);
+    REQUIRE(mat(1, 1) == 5);
+    REQUIRE(mat(1, 2) == 6);
+    REQUIRE(mat(2, 0) == 7);
+    REQUIRE(mat(2, 1) == 8);
+    REQUIRE(mat(2, 2) == 9);
+}
+
+TEST_CASE("Matrix: оператор () для комплексных чисел") {
+    SquareMatrix<Complex<double>, ListSequence> mat(3);
+
+    mat(0, 0) = Complex<double>(1, 1);
+    mat(0, 1) = Complex<double>(2, 0);
+    mat(0, 2) = Complex<double>(3, -1);
+    mat(1, 0) = Complex<double>(0, 2);
+    mat(1, 1) = Complex<double>(5, 0);
+    mat(1, 2) = Complex<double>(1, 1);
+    mat(2, 0) = Complex<double>(2, 2);
+    mat(2, 1) = Complex<double>(0, 0);
+    mat(2, 2) = Complex<double>(4, -1);
+    
+    REQUIRE(mat(0, 0).GetRe() == 1);
+    REQUIRE(mat(0, 0).GetIm() == 1);
+    REQUIRE(mat(0, 1).GetRe() == 2);
+    REQUIRE(mat(0, 1).GetIm() == 0);
+    REQUIRE(mat(0, 2).GetRe() == 3);
+    REQUIRE(mat(0, 2).GetIm() == -1);
+    REQUIRE(mat(1, 0).GetRe() == 0);
+    REQUIRE(mat(1, 0).GetIm() == 2);
+    REQUIRE(mat(1, 1).GetRe() == 5);
+    REQUIRE(mat(1, 1).GetIm() == 0);
+    REQUIRE(mat(2, 2).GetRe() == 4);
+    REQUIRE(mat(2, 2).GetIm() == -1);
+}
+
+TEST_CASE("Matrix: оператор () - проверка на выход за границы") {
+    SquareMatrix<int, ListSequence> mat(3);
+    
+    REQUIRE_THROWS_AS(mat(3, 0), OutOfRangeException);
+    REQUIRE_THROWS_AS(mat(0, 3), OutOfRangeException);
+    REQUIRE_THROWS_AS(mat(5, 5), OutOfRangeException);
+    REQUIRE_THROWS_AS(mat(-1, 0), OutOfRangeException);
+}
+
+TEST_CASE("Matrix: оператор () - изменение существующих элементов") {
+    SquareMatrix<int, ListSequence> mat = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    mat(0, 0) = 100;
+    mat(1, 1) = 200;
+    mat(2, 2) = 300;
+    
+    REQUIRE(mat(0, 0) == 100);
+    REQUIRE(mat(1, 1) == 200);
+    REQUIRE(mat(2, 2) == 300);
+    REQUIRE(mat(0, 1) == 2);
+    REQUIRE(mat(1, 0) == 4);
 }
 
