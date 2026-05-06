@@ -20,6 +20,7 @@ public:
     ~Quate();
 
     void Enqueue(const T value);
+    void Add(const T& value );
     void Dequeue();
     bool IsEmpty() const;
 
@@ -39,6 +40,8 @@ public:
     Quate<T, Container> Extraction(size_t begin, size_t end) const;
     bool Check(Quate<T, Container>& other) const;
     SplitInfo<T, Container> Split(bool (*func)(const T&)) const;
+
+    T& operator[](size_t index);
 
     auto begin();
     auto end();

@@ -781,3 +781,137 @@ TEST_CASE("Queue: удаление всех элементов по одному
     
     REQUIRE(queue.IsEmpty());
 }
+
+
+TEST_CASE("Quate: оператор [] - доступ к элементам") {
+    Quate<int, ArraySequence> queue;
+    queue.Add(10);
+    queue.Add(20);
+    queue.Add(30);
+    
+    REQUIRE(queue[0] == 10);
+    REQUIRE(queue[1] == 20);
+    REQUIRE(queue[2] == 30);
+}
+
+TEST_CASE("Quate: оператор [] - изменение элементов") {
+    Quate<int, ArraySequence> queue;
+    queue.Add(10);
+    queue.Add(20);
+    queue.Add(30);
+    
+    queue[0] = 100;
+    queue[1] = 200;
+    queue[2] = 300;    
+    REQUIRE(queue[0] == 100);
+    REQUIRE(queue[1] == 200);
+    REQUIRE(queue[2] == 300);
+}
+
+TEST_CASE("Quate: оператор [] - выход за границы") {
+    Quate<int, ArraySequence> queue;
+    queue.Add(10);
+    queue.Add(20);
+    
+    REQUIRE_THROWS_AS(queue[2], OutOfRangeException);
+    REQUIRE_THROWS_AS(queue[5], OutOfRangeException);
+}
+
+TEST_CASE("Quate: оператор [] с типом double") {
+    Quate<double, ArraySequence> queue;
+    queue.Add(1.1);
+    queue.Add(2.2);
+    queue.Add(3.3);
+    
+    REQUIRE(queue[0] == Approx(1.1));
+    REQUIRE(queue[1] == Approx(2.2));
+    REQUIRE(queue[2] == Approx(3.3));
+    
+    queue[1] = 4.4;
+    REQUIRE(queue[1] == Approx(4.4));
+}
+
+
+TEST_CASE("Quate: оператор [] с ListSequence") {
+    Quate<int, ListSequence> queue;
+    queue.Add(10);
+    queue.Add(20);
+    queue.Add(30);
+    
+    REQUIRE(queue[0] == 10);
+    REQUIRE(queue[1] == 20);
+    REQUIRE(queue[2] == 30);
+    
+    queue[1] = 200;
+    REQUIRE(queue[1] == 200);
+}
+
+TEST_CASE("Quate: оператор [] с ArraySequence") {
+    Quate<double, ArraySequence> queue;
+    queue.Add(1.0);
+    queue.Add(2.0);
+    queue.Add(3.0);
+    
+    REQUIRE(queue[0] == Approx(1.0));
+    REQUIRE(queue[1] == Approx(2.0));
+    REQUIRE(queue[2] == Approx(3.0));
+}
+
+TEST_CASE("Quate: Add - добавление элементов") {
+    Quate<int, ArraySequence> queue;
+    
+    queue.Add(10);
+    queue.Add(20);
+    queue.Add(30);
+    
+    REQUIRE(queue.GetSize() == 3);
+    REQUIRE(queue[0] == 10);
+    REQUIRE(queue[1] == 20);
+    REQUIRE(queue[2] == 30);
+}
+
+TEST_CASE("Quate: Add - после удаления элементов") {
+    Quate<int, ArraySequence> queue;
+    queue.Add(1);
+    queue.Add(2);
+    queue.Add(3);
+    queue.Add(4);
+    queue.Add(5);
+    
+    queue.Dequeue();
+    queue.Dequeue();
+    
+    REQUIRE(queue.GetSize() == 3);
+    REQUIRE(queue[0] == 3);
+    REQUIRE(queue[1] == 4);
+    REQUIRE(queue[2] == 5);
+    
+    queue.Add(6);
+    queue.Add(7);
+    
+    REQUIRE(queue.GetSize() == 5);
+    REQUIRE(queue[3] == 6);
+    REQUIRE(queue[4] == 7);
+}
+
+TEST_CASE("Quate: Add - с разными типами данных") {
+    Quate<double, ArraySequence> queue;
+    queue.Add(1.5);
+    queue.Add(2.7);
+    queue.Add(3.14);
+    
+    REQUIRE(queue[0] == Approx(1.5));
+    REQUIRE(queue[1] == Approx(2.7));
+    REQUIRE(queue[2] == Approx(3.14));
+}
+
+TEST_CASE("Quate: Add - в пустую очередь") {
+    Quate<int, ArraySequence> queue;
+    REQUIRE(queue.IsEmpty() == true);
+    
+    queue.Add(100);
+    
+    REQUIRE(queue.IsEmpty() == false);
+    REQUIRE(queue.GetSize() == 1);
+    REQUIRE(queue[0] == 100);
+}

@@ -29,6 +29,11 @@ void Quate<T, Container>::Enqueue(const T value){
 }
 
 template<typename T, template<typename> class Container>
+void Quate<T, Container>::Add(const T& value){
+    Enqueue(value);
+}
+
+template<typename T, template<typename> class Container>
 void Quate<T, Container>::Dequeue(){
     if(m_data->GetLength() == 0){
         throw QueueIsEmptyException("Очередь пустая");
@@ -162,6 +167,14 @@ SplitInfo<T, Container> Quate<T, Container>::Split(bool (*func)(const T&)) const
         }
     }
     return result;
+}
+
+template<typename T, template<typename> class Container>
+T& Quate<T, Container>::operator[](size_t index) {
+    if (index >= static_cast<size_t>(GetSize())) {
+        throw OutOfRangeException("Индекс выходит за пределы очереди");
+    }
+    return m_data->GetRef(index);
 }
 
 template<typename T, template<typename> class Container>
