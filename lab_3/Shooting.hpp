@@ -6,7 +6,6 @@
 #include <sstream>
 #include <format>
 #include "Set.hpp"
-#include "ArraySequence.hpp"
 #include "../Error.hpp"
 
 const double g = 9.8;
@@ -28,7 +27,7 @@ struct ShootingResult {
         if (success) {
             return std::format("ПОПАДАНИЕ!\n"
                            "  Скорость: {} м/с\n"
-                           "  Угол: {}°\n"
+                           "  Угол: {}\n"
                            "  Дальность: {} м\n"
                            "  Итераций: {}", 
                            v0, angle, distance, iterations);
@@ -62,10 +61,9 @@ double GetMaxDistance(double v0) {
 }
 
 template<template<typename> class Container>
-double FindAngle(double v0, double target, Container<double>& bounds, size_t& iterations) {
-    bounds.Clear();
-    bounds.Append(0.0);
-    bounds.Append(45.0);
+double FindAngle(double v0, double target, Set<double, Container>& bounds, size_t& iterations) {
+    bounds.Add(0.0);
+    bounds.Add(45.0);
     
     iterations = 0;
     
@@ -77,16 +75,20 @@ double FindAngle(double v0, double target, Container<double>& bounds, size_t& it
         double mid = (left + right) / 2;
         double dist = GetDistance(v0, mid);
         
-        if (std::abs(dist - target) < 1e-6) return mid;
-        
-        bounds.Clear();
+        if (std::abs(dist - target) < 1e-6) {
+            return mid;
+        }
+
+        for (size_t i = bounds.GetSize(); i > 0; i--) {
+            bounds.Dequeue();
+        }
         
         if (dist < target) {
-            bounds.Append(mid);
-            bounds.Append(right);
+            bounds.Add(mid);
+            bounds.Add(right);
         } else {
-            bounds.Append(left);
-            bounds.Append(mid);
+            bounds.Add(left);
+            bounds.Add(mid);
         }
     }
     
@@ -95,21 +97,21 @@ double FindAngle(double v0, double target, Container<double>& bounds, size_t& it
 
 template<template<typename> class Container>
 ShootingResult FindShooting(double x1, double x2, Set<double, Container>& velocities) {
-    
+
     double target = (x1 + x2) / 2;
     ShootingResult best_result;
     double best_diff = 1e9;
     bool found = false;
     
-    for (auto it = velocities.begin(); it != velocities.end(); ++it) {
-        double v0 = *it;
+    for (const auto& v0 : velocities)  {
+        if (GetMaxDistance(v0) < x1) {
+            continue;
+        }
         
-        if (GetMaxDistance(v0) < x1) continue;
-        
-        ArraySequence<double> bounds;
+        Set<double, Container> bounds;
         size_t iterations = 0;
         
-        double angle = FindAngle<ArraySequence>(v0, target, bounds, iterations);
+        double angle = FindAngle<Container>(v0, target, bounds, iterations);
         double distance = GetDistance(v0, angle);
         
         if (distance >= x1 && distance <= x2) {
