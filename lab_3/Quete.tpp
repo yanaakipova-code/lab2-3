@@ -103,7 +103,7 @@ Quate<T, Container> Quate<T, Container>::Where(bool (*predicate)(const T&)) cons
 template<typename T, template<typename> class Container>
 T Quate<T, Container>::Reduce(T (*func)(const T&, const T&)) const{
     T result = m_data->Get(0);
-    for(size_t i = 0; i < m_data->GetLength(); i++){
+    for(size_t i = 1; i < m_data->GetLength(); i++){
         result = func(m_data->Get(i), result);
     }
     return result;
