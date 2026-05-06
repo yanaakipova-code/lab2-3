@@ -33,6 +33,7 @@ public:
     bool IsEmpty() const;
 
     T& operator[](size_t index);
+    Set<T, Container>& operator+(const T& value);
 
     auto begin();
     auto end();

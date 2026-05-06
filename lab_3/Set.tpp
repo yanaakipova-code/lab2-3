@@ -196,6 +196,13 @@ T& Set<T, Container>::operator[](size_t index) {
 }
 
 template<typename T, template<typename> class Container>
+Set<T, Container>& Set<T, Container>::operator+(const T& value) {
+    Add(value);
+    return *this;
+}
+
+
+template<typename T, template<typename> class Container>
 auto Set<T, Container>::begin(){
     return m_data->begin();
 }
