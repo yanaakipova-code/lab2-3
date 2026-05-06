@@ -6,7 +6,7 @@
 #include "../Error.hpp"
 
 const double g = 9.8;
-const double pi = 3.14159265358979323846;
+const double pi = std::atan(1.0) * 4;
 
 struct ShootingResult{
     double v0;
@@ -32,7 +32,7 @@ struct ShootingResult{
             return std::format("Не попали :(\n"
                            "  (наилучшее приближение)\n"
                            "  Скорость: {} м/с\n"
-                           "  Угол: {}°\n"
+                           "  Угол: {}\n"
                            "  Дальность: {} м\n"
                            "  Итераций: {}", 
                            v0, angle, distance, iterations);
@@ -56,66 +56,104 @@ double GetMaxDistance(double v0){
     return v0 * v0 / g;
 }
 
-// bool Comparison(double a, double b){
-//     double eps = 1e-10;
-//     if (std::abs(a - b) < eps){
-//         return true;
-//     }
-//     return false;
-// }
-
-double FindAngle(double v0, double x1, double x2, size_t& iterations){
-    double left = 0.0;
-    double right = 45.0;
-    double target_distance =( x2 + x1 )/ 2;
+template<template<typename> class Container,
+        template<typename> class BoundsAdapter>
+double FindAngle(double v0, double target, 
+                BoundsAdapter<double>& bounds,
+                size_t& iterations) {
+    
+    bounds.Add(0.0);
+    bounds.Add(45.0);
+    
     iterations = 0;
-
-   for(size_t i = 0; i < 100; i++ ){
+    
+    for (size_t i = 0; i < 100; i++) {
         iterations++;
+        
+        double left = bounds[0];
+        double right = bounds[1];
         double mid = (left + right) / 2;
         double dist = GetDistance(v0, mid);
-
-        if (dist < target_distance){
-            left = mid;
+        
+        if (std::abs(dist - target) < 1e-6) return mid;
+        
+        bounds.Dequeue();
+        bounds.Dequeue();
+        
+        if (dist < target) {
+            bounds.Add(mid);
+            bounds.Add(right);
         } else {
-            right = mid;
+            bounds.Add(left);
+            bounds.Add(mid);
         }
     }
-    return (left + right) / 2;
+    
+    return (bounds[0] + bounds[1]) / 2;
 }
 
-template<typename T, template<typename> class Container>
-ShootingResult FindShooting(double x1, double x2, Set<T, Container>& velocities){
-    bool found_any = false; 
-    ShootingResult best_result{};
 
-    double min_dist =  1e9;
-    double target = (x2 + x1)/2;
-
-    for(const auto& v0 : velocities){
-        double max_dis = GetMaxDistance(v0);
-        if(max_dis < x1){
-            continue;
-        }
-
+template<template<typename> class Container,
+         template<typename> class BoundsAdapter,
+         template<typename, template<typename> class> class VelContainer>
+ShootingResult FindShooting(double x1, double x2, VelContainer<double, Container>& velocities) {
+    
+    double target = (x1 + x2) / 2;
+    ShootingResult best_result;
+    double best_diff = 1e9;
+    bool found = false;
+    
+    for (const auto& v0 : velocities) {
+        if (GetMaxDistance(v0) < x1) continue;
+        
+        BoundsAdapter<double> bounds;
+        bounds.Add(0.0);
+        bounds.Add(45.0);
+        
         size_t iterations = 0;
-        double alpha = FindAngle(v0, x1, x2, iterations);
-        double dist = GetDistance(v0, alpha);
-
-        if(dist >= x1 && dist <= x2){
-            found_any = true;
-            return ShootingResult{v0, alpha, dist, true, iterations};
+        
+        for (size_t i = 0; i < 100; i++) {
+            iterations++;
+            
+            double left = bounds[0];
+            double right = bounds[1];
+            double mid = (left + right) / 2;
+            double dist = GetDistance(v0, mid);
+            
+            if (std::abs(dist - target) < 1e-6) {
+                return ShootingResult(v0, mid, dist, true, iterations);
+            }
+            
+            bounds.Dequeue();
+            bounds.Dequeue();
+            
+            if (dist < target) {
+                bounds.Add(mid);
+                bounds.Add(right);
+            } else {
+                bounds.Add(left);
+                bounds.Add(mid);
+            }
         }
-        double deviation = std::abs(dist - target);
-
-        if(deviation < min_dist){
-            min_dist = deviation;
-            best_result = {v0, alpha, dist, false, iterations};
+        
+        double angle = (bounds[0] + bounds[1]) / 2;
+        double distance = GetDistance(v0, angle);
+        
+        if (distance >= x1 && distance <= x2) {
+            return ShootingResult(v0, angle, distance, true, iterations);
+        }
+        
+        double diff = std::abs(distance - target);
+        if (diff < best_diff) {
+            best_diff = diff;
+            best_result = ShootingResult(v0, angle, distance, false, iterations);
+            found = true;
         }
     }
-    if (!found_any) {
+    
+    if (!found) {
         throw ImpossibleToGetInException("Невозможно попасть в цель!");
     }
+    
     return best_result;
-
 }
