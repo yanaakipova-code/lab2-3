@@ -21,8 +21,8 @@ struct ShootingResult {
 
     ShootingResult(double v, double a, double d, bool s, size_t iter = 0)
         : v0{v}, angle{a}, distance{d}, success{s}, iterations{iter} {}
-
-    std::string ToString() const {
+    
+    operator std::string() const {
         if (success) {
             return std::format("ПОПАДАНИЕ!\n"
                            "  Скорость: {} м/с\n"
@@ -39,10 +39,6 @@ struct ShootingResult {
                            "  Итераций: {}", 
                            v0, angle, distance, iterations);
         }
-    }
-    
-    operator std::string() const {
-        return ToString();
     }
 };
 
