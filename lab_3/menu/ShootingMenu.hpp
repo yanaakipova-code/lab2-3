@@ -1,4 +1,3 @@
-// ShootingMenu.hpp
 #pragma once
 #include "Menu.hpp"
 #include "../Set.hpp"
@@ -10,6 +9,53 @@
 #include <cstdlib>
 
 using namespace std;
+
+
+void DrawTrajectorySimple(double v0, double angle_deg) {
+    clear();
+    DrawBorder();
+    
+    const int width = 60;
+    const int height = 18;
+    
+    double rad = angle_deg * pi / 180;
+    double vx = v0 * cos(rad);
+    double vy = v0 * sin(rad);
+    double T = 2 * vy / 9.8;
+    double max_range = vx * T;
+    double max_height = vy * vy / 19.6;
+    
+    mvprintw(2, 2, "=== ТРАЕКТОРИЯ ПОЛЕТА ===");
+    mvprintw(3, 2, "v0 = %.0f м/с, угол = %.0f°", v0, angle_deg);
+    mvprintw(4, 2, "Дальность: %.1f м, Высота: %.1f м", max_range, max_height);
+    mvprintw(5, 2, "");
+    
+    for (int y_pixel = 0; y_pixel < height; y_pixel++) {
+        double y = max_height * (1 - (double)y_pixel / height);
+        
+        mvprintw(6 + y_pixel, 2, "|");
+        
+        for (int x_pixel = 0; x_pixel < width; x_pixel++) {
+            double x = (max_range * x_pixel) / width;
+            double t = x / vx;
+            double y_calc = vy * t - 4.9 * t * t;
+            
+            if (y_calc >= y - 0.5 && y_calc <= y + 0.5 && y_calc >= 0) {
+                mvprintw(6 + y_pixel, 3 + x_pixel, "*");
+            }
+        }
+    }
+    
+    mvprintw(6 + height, 2, "+");
+    for (int x = 0; x < width; x++) {
+        mvprintw(6 + height, 3 + x, "-");
+    }
+    mvprintw(6 + height, 3 + width, "> X");
+    
+    mvprintw(LINES - 3, 2, "Нажмите любую клавишу для продолжения...");
+    refresh();
+    getch();
+}
 
 Set<double, ArraySequence> InputVelocities() {
     Set<double, ArraySequence> velocities;
@@ -26,12 +72,7 @@ Set<double, ArraySequence> InputVelocities() {
     
     int ch = getch();
     if (ch == 'y' || ch == 'Y') {
-        velocities.Add(20.0);
-        velocities.Add(25.0);
-        velocities.Add(30.0);
-        velocities.Add(35.0);
-        velocities.Add(40.0);
-        velocities.Add(45.0);
+        velocities + 20.0 + 25.0 + 30.0 + 35.0 + 40.0 + 45.0;
         return velocities;
     }
     
@@ -87,9 +128,9 @@ void ShowShootingResult(const ShootingResult& result, double x1, double x2) {
     mvprintw(7, 2, "----------------------------------------");
     
     if (result.success) {
-        attron(A_BOLD | A_REVERSE);
-        mvprintw(9, 2, " ПОПАДАНИЕ! ");
-        attroff(A_BOLD | A_REVERSE);
+        attron(A_BOLD);
+        mvprintw(9, 2, "ПОПАДАНИЕ!");
+        attroff(A_BOLD);
     } else {
         attron(A_BOLD);
         mvprintw(9, 2, "Точного попадания нет");
@@ -124,23 +165,25 @@ void ShowVelocitiesTable(double x1, double x2, const Set<double, ArraySequence>&
     mvprintw(7, 2, "----------------------------------------");
     
     int line = 8;
+    double target = (x1 + x2) / 2;
     
     for (const auto& v0 : velocities) {
         double max_range = GetMaxDistance(v0);
         
         if (max_range < x1 - 1e-6) {
-            mvprintw(line++, 2, "  %.2f    |   %.2f    | не долетает", v0, max_range);
+            mvprintw(line++, 2, "  %6.2f   |   %6.2f   | не долетает", v0, max_range);
         } else {
+            Set<double, ArraySequence> bounds;
             size_t iterations = 0;
-            double alpha = FindAngle(v0, x1, x2, iterations);
-            double dist = GetDistance(v0, alpha);
+            double angle = FindAngle<ArraySequence>(v0, target, bounds, iterations);
+            double dist = GetDistance(v0, angle);
             
             if (dist >= x1 - 1e-6 && dist <= x2 + 1e-6) {
-                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | ПОПАДАНИЕ", 
-                         v0, max_range, alpha, dist);
+                mvprintw(line++, 2, "  %6.2f   |   %6.2f   |   %6.2f°  |   %6.2f   | ПОПАДАНИЕ", 
+                         v0, max_range, angle, dist);
             } else {
-                mvprintw(line++, 2, "  %.2f    |   %.2f    |   %.2f°   |   %.2f   | мимо", 
-                         v0, max_range, alpha, dist);
+                mvprintw(line++, 2, "  %6.2f   |   %6.2f   |   %6.2f°  |   %6.2f   | мимо", 
+                         v0, max_range, angle, dist);
             }
         }
         
@@ -168,6 +211,7 @@ void RunShootingMenu() {
     const char* items[] = {
         "Найти оптимальный выстрел",
         "Показать таблицу всех скоростей",
+        "Показать траекторию полета",
         "Ввести новый список скоростей",
         "← Назад"
     };
@@ -176,19 +220,14 @@ void RunShootingMenu() {
     static bool velocities_initialized = false;
     
     if (!velocities_initialized) {
-        velocities.Add(20.0);
-        velocities.Add(25.0);
-        velocities.Add(30.0);
-        velocities.Add(35.0);
-        velocities.Add(40.0);
-        velocities.Add(45.0);
+        velocities + 20.0 + 25.0 + 30.0 + 35.0 + 40.0 + 45.0;
         velocities_initialized = true;
-    }
+   }
     
     while (true) {
-        int choice = RunMenu("РАСЧЕТ ТРАЕКТОРИИ ПОЛЕТА (ПРИСТРЕЛКА)", items, 4);
+        int choice = RunMenu("РАСЧЕТ ТРАЕКТОРИИ ПОЛЕТА (ПРИСТРЕЛКА)", items, 5);
         
-        if (choice == -1 || choice == 3) break;
+        if (choice == -1 || choice == 4) break;
         
         if (choice == 0) {
             clear();
@@ -215,7 +254,7 @@ void RunShootingMenu() {
             }
             
             try {
-                ShootingResult result = FindShooting(x1, x2, velocities);
+                ShootingResult result = FindShooting<ArraySequence>(x1, x2, velocities);
                 ShowShootingResult(result, x1, x2);
             } catch (const ImpossibleToGetInException& e) {
                 ShowMessage(string("Ошибка: ") + e.what(), true);
@@ -250,9 +289,20 @@ void RunShootingMenu() {
             }
         }
         else if (choice == 2) {
+            clear();
+            DrawBorder();
+            
+            mvprintw(2, 2, "=== ПОКАЗАТЬ ТРАЕКТОРИЮ ===");
+            refresh();
+            
+            double v0 = InputDouble("Введите начальную скорость (м/с)");
+            double angle = InputDouble("Введите угол (градусы)");
+            
+            DrawTrajectorySimple(v0, angle);
+        }
+        else if (choice == 3) {
             velocities = InputVelocities();
             velocities_initialized = true;
         }
     }
 }
-
