@@ -16,6 +16,7 @@ public:
 
     void Add(const T& value);
     void RemoveByIndex(size_t index);
+    void Dequeue();
     void RemoveByValue(const T& vaiue);
     bool Contains(const T& value) const;
 
@@ -28,7 +29,10 @@ public:
     Set<T, Container> Subtraction(const Set<T, Container>& other) const;
 
     bool CheckSubset(const Set<T, Container>& other) const;
-    bool Сomparison(const Set<T, Container>& other) const;
+    bool Comparison(const Set<T, Container>& other) const;
+    bool IsEmpty() const;
+
+    T& operator[](size_t index);
 
     auto begin();
     auto end();

@@ -722,7 +722,7 @@ TEST_CASE("Set: Сomparison - одинаковые множества") {
     set2.Add(2);
     set2.Add(1);
     
-    REQUIRE(set1.Сomparison(set2));
+    REQUIRE(set1.Comparison(set2));
 }
 
 TEST_CASE("Set: Сomparison - разные размеры") {
@@ -735,7 +735,7 @@ TEST_CASE("Set: Сomparison - разные размеры") {
     set2.Add(2);
     set2.Add(3);
     
-    REQUIRE_FALSE(set1.Сomparison(set2));
+    REQUIRE_FALSE(set1.Comparison(set2));
 }
 
 TEST_CASE("Set: Сomparison - одинаковый размер, разные элементы") {
@@ -749,14 +749,14 @@ TEST_CASE("Set: Сomparison - одинаковый размер, разные э
     set2.Add(2);
     set2.Add(4);
     
-    REQUIRE_FALSE(set1.Сomparison(set2));
+    REQUIRE_FALSE(set1.Comparison(set2));
 }
 
 TEST_CASE("Set: Сomparison - пустые множества") {
     Set<int, ArraySequence> set1;
     Set<int, ArraySequence> set2;
     
-    REQUIRE(set1.Сomparison(set2));
+    REQUIRE(set1.Comparison(set2));
 }
 
 
@@ -837,4 +837,134 @@ TEST_CASE("Set: добавление элементов в обратном по
     for (int i = 1; i <= 1000; i++) {
         REQUIRE(set.Contains(i));
     }
+}
+
+TEST_CASE("Set: IsEmpty - пустое множество") {
+    Set<int, ArraySequence> set;
+    
+    REQUIRE(set.IsEmpty() == true);
+}
+
+TEST_CASE("Set: IsEmpty - непустое множество") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    
+    REQUIRE(set.IsEmpty() == false);
+}
+
+TEST_CASE("Set: IsEmpty - после добавления и удаления") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.RemoveByIndex(0);
+    
+    REQUIRE(set.IsEmpty() == false);
+    REQUIRE(set.GetSize() == 1);
+    
+    set.RemoveByIndex(0);
+    REQUIRE(set.IsEmpty() == true);
+}
+
+
+TEST_CASE("Set: оператор [] - доступ к элементам") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.Add(30);
+    
+    REQUIRE(set[0] == 10);
+    REQUIRE(set[1] == 20);
+    REQUIRE(set[2] == 30);
+}
+
+TEST_CASE("Set: оператор [] - изменение элементов") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.Add(30);
+    
+    set[0] = 100;
+    set[1] = 200;
+    set[2] = 300;
+    
+    REQUIRE(set[0] == 100);
+    REQUIRE(set[1] == 200);
+    REQUIRE(set[2] == 300);
+}
+
+TEST_CASE("Set: оператор [] - выход за границы") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    
+    REQUIRE_THROWS_AS(set[2], OutOfRangeException);
+    REQUIRE_THROWS_AS(set[5], OutOfRangeException);
+}
+
+TEST_CASE("Set: Dequeue - удаление первого элемента") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.Add(30);
+    
+    set.Dequeue();
+    
+    REQUIRE(set.GetSize() == 2);
+    REQUIRE(set[0] == 20);
+    REQUIRE(set[1] == 30);
+}
+
+TEST_CASE("Set: Dequeue - несколько удалений") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.Add(30);
+    set.Add(40);
+    set.Add(50);
+    
+    set.Dequeue();
+    set.Dequeue();
+    
+    REQUIRE(set.GetSize() == 3);
+    REQUIRE(set[0] == 30);
+    REQUIRE(set[1] == 40);
+    REQUIRE(set[2] == 50);
+}
+
+TEST_CASE("Set: Dequeue - удаление единственного элемента") {
+    Set<int, ArraySequence> set;
+    set.Add(42);
+    
+    set.Dequeue();
+    
+    REQUIRE(set.GetSize() == 0);
+    REQUIRE(set.IsEmpty() == true);
+}
+
+TEST_CASE("Set: Dequeue - удаление из пустого множества") {
+    Set<int, ArraySequence> set;
+    
+    REQUIRE_THROWS_AS(set.Dequeue(), QueueIsEmptyException);
+}
+
+TEST_CASE("Set: Dequeue - после удаления можно добавлять") {
+    Set<int, ArraySequence> set;
+    set.Add(10);
+    set.Add(20);
+    set.Add(30);
+    
+    set.Dequeue();
+    
+    REQUIRE(set.GetSize() == 2);
+    REQUIRE(set[0] == 20);
+    REQUIRE(set[1] == 30);
+    
+    set.Add(40);
+    set.Add(50);
+    
+    REQUIRE(set.GetSize() == 4);
+    REQUIRE(set[0] == 20);
+    REQUIRE(set[1] == 30);
+    REQUIRE(set[2] == 40);
+    REQUIRE(set[3] == 50);
 }

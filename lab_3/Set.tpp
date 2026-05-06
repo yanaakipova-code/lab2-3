@@ -57,6 +57,14 @@ void Set<T, Container>::RemoveByIndex(size_t index){
 }
 
 template<typename T, template<typename> class Container>
+void Set<T, Container>::Dequeue(){
+    if (GetSize() == 0) {
+        throw QueueIsEmptyException("Множество пустое");
+    }
+    RemoveByIndex(0);
+}
+
+template<typename T, template<typename> class Container>
 void Set<T, Container>::RemoveByValue(const T& value){
     int index = -1;
     for(int i = 0; i < GetSize(); i++){
@@ -164,11 +172,27 @@ bool Set<T, Container>::CheckSubset(const Set<T, Container>& other) const {
 }
 
 template<typename T, template<typename> class Container>
-bool Set<T, Container>::Сomparison(const Set<T, Container>& other) const{
+bool Set<T, Container>::Comparison(const Set<T, Container>& other) const{
     if(GetSize() == other.GetSize() && CheckSubset(other)){
         return true;
     }
     return false;
+}
+
+template<typename T, template<typename> class Container>
+bool Set<T, Container>::IsEmpty() const{
+    if(GetSize() == 0){
+        return true;
+    }
+    return false;
+}
+
+template<typename T, template<typename> class Container>
+T& Set<T, Container>::operator[](size_t index) {
+    if (index >= GetSize()) {
+        throw OutOfRangeException("Индекс выходит за пределы множества");
+    }
+    return m_data->GetRef(index);
 }
 
 template<typename T, template<typename> class Container>
