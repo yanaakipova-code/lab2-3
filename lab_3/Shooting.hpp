@@ -1,4 +1,3 @@
-// Shooting.hpp
 #pragma once
 #include <stdexcept>
 #include <cmath>
